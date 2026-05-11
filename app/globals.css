@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap');
+@import "@kaiserinc/tokens/css";
+@import "tailwindcss";
+
+@source "../node_modules/@kaiserinc/react/dist/index.mjs";
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: var(--bg-base);
+  color: var(--fg-1);
+  font-family: 'Roboto', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, pre, kbd {
+  font-family: 'Roboto Mono', monospace;
+}
+
+[data-theme] {
+  --shadow-md: 0 0 0 1px rgba(130, 87, 230, 0.22),
+               0 8px 24px rgba(130, 87, 230, 0.14),
+               0 2px 8px rgba(0, 0, 0, 0.18);
+  --duration-base: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mk-dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+a, button { transition: color 0.3s, background 0.3s, border-color 0.3s, box-shadow 0.3s, opacity 0.3s; }
