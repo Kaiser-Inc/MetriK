@@ -58,3 +58,10 @@ export type ReportListItem = {
   generated_at: string;
   project: string;
 };
+
+export type EnrichedItem = ReportListItem & {
+  cc_grade?: string;
+  coverage_percent?: number;
+  xenon_passed?: boolean;
+  rawJson?: MetricsReport;
+};

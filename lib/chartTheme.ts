@@ -19,7 +19,6 @@ export const TOOLTIP_STYLE: CSSProperties = {
   boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
 };
 
-// Estilos para label e item do Tooltip (forçam cor no Recharts)
 export const TOOLTIP_LABEL_STYLE: CSSProperties = {
   color: "#e2e8f0",
   fontWeight: 600,
@@ -30,14 +29,13 @@ export const TOOLTIP_ITEM_STYLE: CSSProperties = {
   color: "#a0aec0",
 };
 
-// Largura da linha de referência e estilo do label
 export const REF_LINE_STYLE = {
   strokeWidth: 1.5,
   labelStyle: {
     fontSize: 11,
     fontWeight: 700,
     dy: -4,
-    fill: "#cbd5e1", // cinza claro — legível em qualquer cor de barra
+    fill: "#cbd5e1",
   },
 };
 
@@ -66,3 +64,30 @@ export const PYLINT_TYPE_COLORS: Record<string, string> = {
   error:      "var(--danger-500)",
   fatal:      "var(--brand)",
 };
+
+// ─── Shared chart legend ──────────────────────────────────────────────────────
+
+export type LegendItem = {
+  color: string;
+  label: string;
+  dash?: boolean; // linha tracejada (reference line)
+  dot?: boolean;  // círculo (categoria)
+};
+
+export const CC_LEGEND: LegendItem[] = [
+  { color: "var(--success-500)", label: "≤ 5 — Simples (A)", dash: true },
+  { color: "var(--warning-500)", label: "≤ 10 — Moderado (B)", dash: true },
+  { color: "var(--danger-500)",  label: "> 10 — Complexo (C+)", dot: true },
+];
+
+export const MI_LEGEND: LegendItem[] = [
+  { color: "var(--success-500)", label: "≥ 20 — Fácil manutenção", dash: true },
+  { color: "var(--warning-500)", label: "≥ 10 — Moderado", dash: true },
+  { color: "var(--danger-500)",  label: "< 10 — Difícil manutenção", dot: true },
+];
+
+export const COVERAGE_LEGEND: LegendItem[] = [
+  { color: "var(--success-500)", label: "≥ 80% — Meta atingida", dash: true },
+  { color: "var(--warning-500)", label: "≥ 50% — Parcial", dot: true },
+  { color: "var(--danger-500)",  label: "< 50% — Crítico", dot: true },
+];

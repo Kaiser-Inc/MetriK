@@ -1,17 +1,21 @@
 "use client";
 
+import type { RefObject } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ReferenceLine, Cell, ResponsiveContainer,
 } from "recharts";
 import { CHART_COLORS, TOOLTIP_STYLE, TOOLTIP_LABEL_STYLE, TOOLTIP_ITEM_STYLE, REF_LINE_STYLE, miColor } from "@/lib/chartTheme";
 
-interface Props { perFile: Record<string, number> }
+interface Props {
+  perFile: Record<string, number>;
+  exportRef?: RefObject<HTMLDivElement | null>;
+}
 
 const BAR_HEIGHT = 26;
 const MIN_HEIGHT = 200;
 
-export function MIChart({ perFile }: Props) {
+export function MIChart({ perFile, exportRef }: Props) {
   const data = Object.entries(perFile)
     .sort(([, a], [, b]) => a - b)
     .map(([file, value]) => ({ file: file.split("/").pop() ?? file, value: Number(value.toFixed(1)) }));
@@ -19,7 +23,7 @@ export function MIChart({ perFile }: Props) {
   const height = Math.max(MIN_HEIGHT, data.length * BAR_HEIGHT);
 
   return (
-    <div>
+    <div ref={exportRef}>
       <ResponsiveContainer width="100%" height={height}>
         <BarChart layout="vertical" data={data} margin={{ top: 4, right: 32, left: 8, bottom: 4 }}>
           <CartesianGrid horizontal={false} stroke={CHART_COLORS.border} strokeDasharray="3 3" />
@@ -36,16 +40,6 @@ export function MIChart({ perFile }: Props) {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <div style={{ display: "flex", gap: 16, marginTop: 8, paddingLeft: 8, fontSize: 11, color: "var(--fg-3)" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-          <span style={{ display: "inline-block", width: 18, height: 2, background: CHART_COLORS.danger, borderRadius: 1 }} />
-          MI &lt; 10 — difícil manutenção
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-          <span style={{ display: "inline-block", width: 18, height: 2, background: CHART_COLORS.good, borderRadius: 1 }} />
-          MI ≥ 20 — fácil manutenção
-        </span>
-      </div>
     </div>
   );
 }

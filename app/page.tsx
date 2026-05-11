@@ -2,13 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { parseMetricsDate } from "@/lib/formatDate";
 import { HomeContent } from "@/components/HomeContent";
-import type { ReportListItem } from "@/types/metrics";
-
-type EnrichedItem = ReportListItem & {
-  cc_grade?: string;
-  coverage_percent?: number;
-  xenon_passed?: boolean;
-};
+import type { EnrichedItem } from "@/types/metrics";
 
 async function getReports(): Promise<{ items: EnrichedItem[]; error?: string }> {
   const metricsDir = process.env.METRICS_DIR;
@@ -60,6 +54,14 @@ async function getReports(): Promise<{ items: EnrichedItem[]; error?: string }> 
 }
 
 export default async function HomePage() {
+  // Deploy mode = no METRICS_DIR configured (Vercel, shared hosting, etc.)
+  // Local mode = METRICS_DIR is set in .env.local
+  const deployMode = !process.env.METRICS_DIR;
+
+  if (deployMode) {
+    return <HomeContent items={[]} deployMode />;
+  }
+
   const { items, error } = await getReports();
   return <HomeContent items={items} error={error} />;
 }

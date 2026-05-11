@@ -3,18 +3,17 @@
 import { useRouter } from "next/navigation";
 import { Card, CardBody } from "@kaiserinc/react";
 import { GitBranch, Shield, CheckCircle2, XCircle, ChevronRight } from "lucide-react";
-import type { ReportListItem } from "@/types/metrics";
+import type { EnrichedItem } from "@/types/metrics";
 import { formatDate } from "@/lib/formatDate";
 
 interface Props {
-  report: ReportListItem & {
-    cc_grade?: string;
-    coverage_percent?: number;
-    xenon_passed?: boolean;
-  };
+  report: EnrichedItem;
+  compareMode?: boolean;
+  selected?: boolean;
+  onSelect?: (slug: string, checked: boolean) => void;
 }
 
-export function ReportCard({ report }: Props) {
+export function ReportCard({ report, compareMode = false, selected = false, onSelect }: Props) {
   const router = useRouter();
 
   const coverageColor =
@@ -28,19 +27,29 @@ export function ReportCard({ report }: Props) {
     : report.xenon_passed ? "var(--success-500)"
     : "var(--danger-500)";
 
+  const handleClick = () => {
+    if (compareMode) {
+      onSelect?.(report.slug, !selected);
+    } else {
+      router.push(`/report/${report.slug}`);
+    }
+  };
+
   return (
     <Card
       hoverable
       className="cursor-pointer"
-      onClick={() => router.push(`/report/${report.slug}`)}
+      onClick={handleClick}
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && router.push(`/report/${report.slug}`)}
-      role="button"
-      aria-label={`Ver relatório ${report.project}`}
+      onKeyDown={(e) => e.key === "Enter" && handleClick()}
+      role={compareMode ? "checkbox" : "button"}
+      aria-checked={compareMode ? selected : undefined}
+      aria-label={compareMode ? `Selecionar ${report.project} para comparar` : `Ver relatório ${report.project}`}
+      style={selected ? { outline: "2px solid var(--brand)", outlineOffset: 2 } : undefined}
     >
       <CardBody>
         <div className="flex flex-col gap-3">
-          {/* Header — title + chevron */}
+          {/* Header — title + action icon */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h2
@@ -53,17 +62,41 @@ export function ReportCard({ report }: Props) {
                 {formatDate(report.generated_at)}
               </p>
             </div>
-            <ChevronRight size={15} style={{ color: "var(--fg-4)", flexShrink: 0, marginTop: 2 }} />
+            {compareMode ? (
+              <div
+                style={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: 4,
+                  border: `2px solid ${selected ? "var(--brand)" : "var(--border-default)"}`,
+                  background: selected ? "var(--brand)" : "transparent",
+                  flexShrink: 0,
+                  marginTop: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.15s",
+                }}
+              >
+                {selected && (
+                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+            ) : (
+              <ChevronRight size={15} style={{ color: "var(--fg-4)", flexShrink: 0, marginTop: 2 }} />
+            )}
           </div>
 
           {/* Divider */}
           <div style={{ borderTop: "1px solid var(--border-default)" }} />
 
-          {/* Metrics row — compact */}
+          {/* Metrics row */}
           <div className="grid grid-cols-3 gap-2">
             <div className="flex flex-col items-center gap-0.5">
               <GitBranch size={14} style={{ color: "var(--brand)" }} />
-              <span className="text-xs" style={{ color: "var(--fg-3)", fontSize: "0.65rem" }}>CC</span>
+              <span style={{ color: "var(--fg-3)", fontSize: "0.65rem" }}>CC</span>
               <span className="text-xs font-semibold" style={{ color: "var(--fg-1)" }}>
                 {report.cc_grade ?? "—"}
               </span>
