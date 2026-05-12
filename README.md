@@ -132,9 +132,3 @@ types/
   metrics.ts            # MetricsReport, EnrichedItem
   fsa.d.ts              # Tipos File System Access API
 ```
-
----
-
-## Tópicos sugeridos para o repositório
-
-`code-quality` `metrics` `dashboard` `nextjs` `python` `recharts` `typescript` `vercel` `kaiserinc` `radon` `pylint` `coverage`
