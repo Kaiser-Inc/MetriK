@@ -54,7 +54,8 @@ export function HalsteadSection({ report }: Props) {
         </p>
       </CardHeader>
       <CardBody>
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(160px, 1fr))", gap: 16 }}>
           <MetricItem
             icon={<Bug size={15} style={brandIcon} />}
             label="Bugs Estimados"
@@ -70,6 +71,7 @@ export function HalsteadSection({ report }: Props) {
             label="Arquivos Analisados"
             value={h.files_analyzed}
           />
+        </div>
         </div>
       </CardBody>
     </Card>

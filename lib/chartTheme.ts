@@ -75,19 +75,27 @@ export type LegendItem = {
 };
 
 export const CC_LEGEND: LegendItem[] = [
-  { color: "var(--success-500)", label: "≤ 5 — Simples (A)", dash: true },
-  { color: "var(--warning-500)", label: "≤ 10 — Moderado (B)", dash: true },
+  { color: "var(--success-500)", label: "≤ 5 — Simples (A)", dot: true },
+  { color: "var(--warning-500)", label: "≤ 10 — Moderado (B)", dot: true },
   { color: "var(--danger-500)",  label: "> 10 — Complexo (C+)", dot: true },
 ];
 
 export const MI_LEGEND: LegendItem[] = [
-  { color: "var(--success-500)", label: "≥ 20 — Fácil manutenção", dash: true },
-  { color: "var(--warning-500)", label: "≥ 10 — Moderado", dash: true },
+  { color: "var(--success-500)", label: "≥ 20 — Fácil manutenção", dot: true },
+  { color: "var(--warning-500)", label: "≥ 10 — Moderado", dot: true },
   { color: "var(--danger-500)",  label: "< 10 — Difícil manutenção", dot: true },
 ];
 
 export const COVERAGE_LEGEND: LegendItem[] = [
-  { color: "var(--success-500)", label: "≥ 80% — Meta atingida", dash: true },
+  { color: "var(--success-500)", label: "≥ 80% — Meta atingida", dot: true },
   { color: "var(--warning-500)", label: "≥ 50% — Parcial", dot: true },
   { color: "var(--danger-500)",  label: "< 50% — Crítico", dot: true },
+];
+
+export const PYLINT_LEGEND: LegendItem[] = [
+  { color: "#4472C4",              label: "Convention", dot: true },
+  { color: "var(--warning-500)",   label: "Refactor",   dot: true },
+  { color: "#FFC000",              label: "Warning",    dot: true },
+  { color: "var(--danger-500)",    label: "Error",      dot: true },
+  { color: "var(--brand)",         label: "Fatal",      dot: true },
 ];

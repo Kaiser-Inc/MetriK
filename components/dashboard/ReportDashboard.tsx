@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { TopBar, Card, CardHeader, CardBody, CardTitle } from "@kaiserinc/react";
 import {
@@ -9,13 +9,13 @@ import {
   ShieldCheck,
   AlertTriangle,
   Clock,
-  Download,
+  ArrowLeft,
 } from "lucide-react";
 import { MetriKaLogo } from "@/components/MetriKaLogo";
 import { Footer } from "@/components/Footer";
 import { TutorialModal } from "@/components/TutorialModal";
 import { ChartLegend } from "@/components/charts/ChartLegend";
-import { CC_LEGEND, MI_LEGEND, COVERAGE_LEGEND } from "@/lib/chartTheme";
+import { CC_LEGEND, MI_LEGEND, COVERAGE_LEGEND, PYLINT_LEGEND } from "@/lib/chartTheme";
 import { SummaryCards } from "./SummaryCards";
 import { HalsteadSection } from "./HalsteadSection";
 import { XenonBadge } from "./XenonBadge";
@@ -34,11 +34,6 @@ interface Props {
 }
 
 export function ReportDashboard({ report: serverReport, slug, formattedDate: serverDate }: Props) {
-  const ccRef = useRef<HTMLDivElement>(null);
-  const miRef = useRef<HTMLDivElement>(null);
-  const coverageRef = useRef<HTMLDivElement>(null);
-  const pylintRef = useRef<HTMLDivElement>(null);
-
   const [report, setReport] = useState<MetricsReport | null>(serverReport);
   const [formattedDate, setFormattedDate] = useState(serverDate);
   const [notFound, setNotFound] = useState(false);
@@ -59,38 +54,6 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
     }
   }, [serverReport, slug]);
 
-  const exportPng = async (ref: React.RefObject<HTMLDivElement | null>, name: string) => {
-    if (!ref.current || !report) return;
-    const { toPng } = await import("html-to-image");
-    const url = await toPng(ref.current, { pixelRatio: 2 });
-    const a = document.createElement("a");
-    a.download = `metrik_${report.project}_${name}.png`;
-    a.href = url;
-    a.click();
-  };
-
-  const downloadBtn = (ref: React.RefObject<HTMLDivElement | null>, name: string) => (
-    <button
-      onClick={() => exportPng(ref, name)}
-      title="Exportar PNG"
-      style={{
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        color: "var(--fg-4)",
-        padding: 4,
-        display: "flex",
-        alignItems: "center",
-        borderRadius: 4,
-        transition: "color 0.2s",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg-2)")}
-      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--fg-4)")}
-    >
-      <Download size={14} />
-    </button>
-  );
-
   const topBar = (projectName?: string) => (
     <TopBar
       logo={<MetriKaLogo />}
@@ -99,6 +62,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
         <>
           <nav
             aria-label="Breadcrumb"
+            className="hidden sm:block"
             style={{
               position: "absolute",
               left: "50%",
@@ -189,6 +153,14 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
             }}
           />
           <div style={{ position: "relative" }}>
+            <Link
+              href="/"
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--fg-4)", textDecoration: "none", marginBottom: 12 }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--fg-2)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--fg-4)"; }}
+            >
+              <ArrowLeft size={12} /> Voltar
+            </Link>
             <p style={{
               fontSize: "0.7rem",
               fontWeight: 500,
@@ -223,19 +195,16 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <CardTitle>
-                  <span className="flex items-center gap-2">
-                    <GitBranch size={16} style={{ color: "var(--brand)" }} />
-                    Complexidade Ciclomática
-                  </span>
-                </CardTitle>
-                {downloadBtn(ccRef, "cc")}
-              </div>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <GitBranch size={16} style={{ color: "var(--brand)" }} />
+                  Complexidade Ciclomática
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardBody>
               <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CCChart perFile={report.cyclomatic_complexity.summary.per_file} exportRef={ccRef} />
+                <CCChart perFile={report.cyclomatic_complexity.summary.per_file} />
               </div>
               <ChartLegend items={CC_LEGEND} />
             </CardBody>
@@ -243,19 +212,16 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
           <Card>
             <CardHeader>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <CardTitle>
-                  <span className="flex items-center gap-2">
-                    <Wrench size={16} style={{ color: "var(--brand)" }} />
-                    Índice de Manutenibilidade
-                  </span>
-                </CardTitle>
-                {downloadBtn(miRef, "mi")}
-              </div>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <Wrench size={16} style={{ color: "var(--brand)" }} />
+                  Índice de Manutenibilidade
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardBody>
               <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <MIChart perFile={report.maintainability_index.summary.per_file} exportRef={miRef} />
+                <MIChart perFile={report.maintainability_index.summary.per_file} />
               </div>
               <ChartLegend items={MI_LEGEND} />
             </CardBody>
@@ -263,45 +229,41 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
           <Card>
             <CardHeader>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <CardTitle>
-                  <span className="flex items-center gap-2">
-                    <ShieldCheck size={16} style={{ color: "var(--brand)" }} />
-                    Cobertura de Testes
-                  </span>
-                </CardTitle>
-                {downloadBtn(coverageRef, "coverage")}
-              </div>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <ShieldCheck size={16} style={{ color: "var(--brand)" }} />
+                  Cobertura de Testes
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardBody>
               <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CoverageChart byFile={report.test_coverage.by_file} exportRef={coverageRef} />
+                <CoverageChart byFile={report.test_coverage.by_file} />
               </div>
               <ChartLegend items={COVERAGE_LEGEND} />
             </CardBody>
           </Card>
 
-          <Card>
+          <Card className="flex flex-col">
             <CardHeader>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <CardTitle>
-                  <span className="flex items-center gap-2">
-                    <AlertTriangle size={16} style={{ color: "var(--brand)" }} />
-                    Issues Pylint{" "}
-                    <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>
-                      ({report.pylint.summary.total_issues})
-                    </span>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <AlertTriangle size={16} style={{ color: "var(--brand)" }} />
+                  Issues Pylint{" "}
+                  <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>
+                    ({report.pylint.summary.total_issues})
                   </span>
-                </CardTitle>
-                {downloadBtn(pylintRef, "pylint")}
-              </div>
+                </span>
+              </CardTitle>
             </CardHeader>
-            <CardBody>
-              <PylintChart
-                byType={report.pylint.summary.by_type}
-                score={report.pylint.summary.score}
-                exportRef={pylintRef}
-              />
+            <CardBody className="flex-1 flex flex-col">
+              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <PylintChart
+                  byType={report.pylint.summary.by_type}
+                  score={report.pylint.summary.score}
+                />
+              </div>
+              <ChartLegend items={PYLINT_LEGEND} />
             </CardBody>
           </Card>
         </section>

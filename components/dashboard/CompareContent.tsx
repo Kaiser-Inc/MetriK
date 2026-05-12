@@ -6,11 +6,14 @@ import { ArrowLeft, GitCompareArrows } from "lucide-react";
 import Link from "next/link";
 import { MetriKaLogo } from "@/components/MetriKaLogo";
 import { Footer } from "@/components/Footer";
+import { TutorialModal } from "@/components/TutorialModal";
 import { DeltaBadge } from "./DeltaBadge";
 import { CCChart } from "@/components/charts/CCChart";
 import { MIChart } from "@/components/charts/MIChart";
 import { CoverageChart } from "@/components/charts/CoverageChart";
 import { PylintChart } from "@/components/charts/PylintChart";
+import { ChartLegend } from "@/components/charts/ChartLegend";
+import { CC_LEGEND, MI_LEGEND, COVERAGE_LEGEND, PYLINT_LEGEND } from "@/lib/chartTheme";
 import { loadReportsFromSession } from "@/lib/fileSystem";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
@@ -132,7 +135,30 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
 
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
-      <TopBar logo={<MetriKaLogo />} />
+      <TopBar
+        logo={<MetriKaLogo />}
+        className="relative"
+        actions={
+          <>
+            <nav
+              aria-label="Breadcrumb"
+              className="hidden sm:block"
+              style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }}
+            >
+              <ol className="flex items-center gap-1.5 text-xs" style={{ color: "var(--fg-4)", pointerEvents: "auto" }}>
+                <li>
+                  <Link href="/" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span aria-hidden>/</span>
+                  <span className="font-medium" style={{ color: "var(--fg-2)" }}>Comparativo</span>
+                </li>
+              </ol>
+            </nav>
+            <TutorialModal />
+          </>
+        }
+      />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8 flex flex-col gap-8">
         {/* Header */}
@@ -200,12 +226,14 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
               <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
                 <CCChart perFile={reportA.cyclomatic_complexity.summary.per_file} />
               </div>
+              <ChartLegend items={CC_LEGEND} />
             </div>
             <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
               <p style={{ marginBottom: 8 }}>{label(reportB.project)} — CC</p>
               <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
                 <CCChart perFile={reportB.cyclomatic_complexity.summary.per_file} />
               </div>
+              <ChartLegend items={CC_LEGEND} />
             </div>
             {/* Coverage */}
             <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
@@ -213,12 +241,14 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
               <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
                 <CoverageChart byFile={reportA.test_coverage.by_file} />
               </div>
+              <ChartLegend items={COVERAGE_LEGEND} />
             </div>
             <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
               <p style={{ marginBottom: 8 }}>{label(reportB.project)} — Cobertura</p>
               <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
                 <CoverageChart byFile={reportB.test_coverage.by_file} />
               </div>
+              <ChartLegend items={COVERAGE_LEGEND} />
             </div>
             {/* MI */}
             <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
@@ -226,21 +256,29 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
               <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
                 <MIChart perFile={reportA.maintainability_index.summary.per_file} />
               </div>
+              <ChartLegend items={MI_LEGEND} />
             </div>
             <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
               <p style={{ marginBottom: 8 }}>{label(reportB.project)} — MI</p>
               <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
                 <MIChart perFile={reportB.maintainability_index.summary.per_file} />
               </div>
+              <ChartLegend items={MI_LEGEND} />
             </div>
             {/* Pylint */}
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
+            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column" }}>
               <p style={{ marginBottom: 8 }}>{label(reportA.project)} — Pylint</p>
-              <PylintChart byType={reportA.pylint.summary.by_type} score={reportA.pylint.summary.score} />
+              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <PylintChart byType={reportA.pylint.summary.by_type} score={reportA.pylint.summary.score} />
+              </div>
+              <ChartLegend items={PYLINT_LEGEND} />
             </div>
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
+            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column" }}>
               <p style={{ marginBottom: 8 }}>{label(reportB.project)} — Pylint</p>
-              <PylintChart byType={reportB.pylint.summary.by_type} score={reportB.pylint.summary.score} />
+              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <PylintChart byType={reportB.pylint.summary.by_type} score={reportB.pylint.summary.score} />
+              </div>
+              <ChartLegend items={PYLINT_LEGEND} />
             </div>
           </div>
         </section>
@@ -249,7 +287,8 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
         <section>
           <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--fg-2)" }}>Diff por Arquivo</h2>
           <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, overflow: "hidden" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.78rem" }}>
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <table style={{ width: "100%", minWidth: 520, borderCollapse: "collapse", fontSize: "0.78rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
                   {["Arquivo", "CC (A)", "CC (B)", "Δ CC", "Cob. (A)", "Cob. (B)", "Δ Cob."].map((h) => (
@@ -279,6 +318,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
       </main>
