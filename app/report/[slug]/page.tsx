@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { notFound } from "next/navigation";
 import { parseReport } from "@/lib/parseReport";
 import { ReportDashboard } from "@/components/dashboard/ReportDashboard";
 import { formatDate } from "@/lib/formatDate";
@@ -24,12 +23,12 @@ export default async function ReportPage({
 }) {
   const { slug } = await params;
   const report = await getReport(slug);
-  if (!report) notFound();
 
   return (
     <ReportDashboard
       report={report}
-      formattedDate={formatDate(report.generated_at, "long")}
+      slug={slug}
+      formattedDate={report ? formatDate(report.generated_at, "long") : ""}
     />
   );
 }

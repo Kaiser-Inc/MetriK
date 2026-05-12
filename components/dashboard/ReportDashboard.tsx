@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { TopBar, Card, CardHeader, CardBody, CardTitle } from "@kaiserinc/react";
 import {
@@ -23,21 +23,44 @@ import { CCChart } from "@/components/charts/CCChart";
 import { MIChart } from "@/components/charts/MIChart";
 import { CoverageChart } from "@/components/charts/CoverageChart";
 import { PylintChart } from "@/components/charts/PylintChart";
+import { loadReportsFromSession } from "@/lib/fileSystem";
+import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
 
 interface Props {
-  report: MetricsReport;
+  report: MetricsReport | null;
+  slug: string;
   formattedDate: string;
 }
 
-export function ReportDashboard({ report, formattedDate }: Props) {
+export function ReportDashboard({ report: serverReport, slug, formattedDate: serverDate }: Props) {
   const ccRef = useRef<HTMLDivElement>(null);
   const miRef = useRef<HTMLDivElement>(null);
   const coverageRef = useRef<HTMLDivElement>(null);
   const pylintRef = useRef<HTMLDivElement>(null);
 
+  const [report, setReport] = useState<MetricsReport | null>(serverReport);
+  const [formattedDate, setFormattedDate] = useState(serverDate);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (serverReport) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    const items = loadReportsFromSession();
+    const match = items?.find((i) => i.slug === slug);
+    if (match?.rawJson) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setReport(match.rawJson);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFormattedDate(formatDate(match.rawJson.generated_at, "long"));
+    } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setNotFound(true);
+    }
+  }, [serverReport, slug]);
+
   const exportPng = async (ref: React.RefObject<HTMLDivElement | null>, name: string) => {
-    if (!ref.current) return;
+    if (!ref.current || !report) return;
     const { toPng } = await import("html-to-image");
     const url = await toPng(ref.current, { pixelRatio: 2 });
     const a = document.createElement("a");
@@ -68,36 +91,83 @@ export function ReportDashboard({ report, formattedDate }: Props) {
     </button>
   );
 
-  return (
-    <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
-      <TopBar
-        logo={<MetriKaLogo />}
-        className="relative"
-        actions={
-          <>
-            <nav
-              aria-label="Breadcrumb"
-              style={{
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-                pointerEvents: "none",
-              }}
-            >
-              <ol className="flex items-center gap-1.5 text-xs" style={{ color: "var(--fg-4)", pointerEvents: "auto" }}>
-                <li>
-                  <Link href="/" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
-                </li>
+  const topBar = (projectName?: string) => (
+    <TopBar
+      logo={<MetriKaLogo />}
+      className="relative"
+      actions={
+        <>
+          <nav
+            aria-label="Breadcrumb"
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+              pointerEvents: "none",
+            }}
+          >
+            <ol className="flex items-center gap-1.5 text-xs" style={{ color: "var(--fg-4)", pointerEvents: "auto" }}>
+              <li>
+                <Link href="/" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
+              </li>
+              {projectName && (
                 <li className="flex items-center gap-1.5">
                   <span aria-hidden>/</span>
-                  <span className="font-medium" style={{ color: "var(--fg-2)" }}>{report.project}</span>
+                  <span className="font-medium" style={{ color: "var(--fg-2)" }}>{projectName}</span>
                 </li>
-              </ol>
-            </nav>
-            <TutorialModal />
-          </>
-        }
-      />
+              )}
+            </ol>
+          </nav>
+          <TutorialModal />
+        </>
+      }
+    />
+  );
+
+  if (notFound) {
+    return (
+      <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
+        {topBar()}
+        <main className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
+          <p style={{ fontSize: "1rem", color: "var(--fg-2)", fontWeight: 600 }}>
+            Relatório não encontrado
+          </p>
+          <p style={{ fontSize: "0.875rem", color: "var(--fg-4)", textAlign: "center", maxWidth: 380 }}>
+            Selecione a pasta com os relatórios na página inicial para carregar este relatório.
+          </p>
+          <Link
+            href="/"
+            style={{
+              marginTop: 8,
+              fontSize: "0.875rem",
+              color: "var(--brand)",
+              textDecoration: "underline",
+              textUnderlineOffset: 3,
+            }}
+          >
+            ← Voltar ao início
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!report) {
+    return (
+      <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
+        {topBar()}
+        <main className="flex-1 flex items-center justify-center">
+          <p style={{ fontSize: "0.875rem", color: "var(--fg-4)" }}>Carregando...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
+      {topBar(report.project)}
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8 flex flex-col gap-8">
         {/* Project eyebrow header */}
