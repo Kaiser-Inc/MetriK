@@ -5,7 +5,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -25,7 +24,7 @@ export function PylintChart({ byType, score, exportRef }: Props) {
   if (data.length === 0) {
     return (
       <div ref={exportRef} style={{
-        height: 320,
+        flex: 1,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -54,12 +53,6 @@ export function PylintChart({ byType, score, exportRef }: Props) {
       <ResponsiveContainer width="100%" height={320}>
         <PieChart>
           <Tooltip contentStyle={TOOLTIP_STYLE} />
-          <Legend
-            verticalAlign="bottom"
-            iconType="circle"
-            iconSize={10}
-            wrapperStyle={{ color: "var(--fg-2)", fontSize: 12 }}
-          />
           <Pie
             data={data}
             cx="50%"
