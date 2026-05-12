@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { TopBar, Card, CardHeader, CardBody, CardTitle } from "@kaiserinc/react";
+import { TopBar } from "@kaiserinc/react";
 import {
   GitBranch,
   Wrench,
@@ -14,7 +14,7 @@ import {
 import { MetriKaLogo } from "@/components/MetriKaLogo";
 import { Footer } from "@/components/Footer";
 import { TutorialModal } from "@/components/TutorialModal";
-import { ChartLegend } from "@/components/charts/ChartLegend";
+import { ChartCardWithLegend } from "@/components/charts/ChartCardWithLegend";
 import { CC_LEGEND, MI_LEGEND, COVERAGE_LEGEND, PYLINT_LEGEND } from "@/lib/chartTheme";
 import { SummaryCards } from "./SummaryCards";
 import { HalsteadSection } from "./HalsteadSection";
@@ -193,79 +193,50 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
         {/* Charts */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
-                  <GitBranch size={16} style={{ color: "var(--brand)" }} />
-                  Complexidade Ciclomática
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CCChart perFile={report.cyclomatic_complexity.summary.per_file} />
-              </div>
-              <ChartLegend items={CC_LEGEND} />
-            </CardBody>
-          </Card>
+          <ChartCardWithLegend
+            title="Complexidade Ciclomática"
+            icon={<GitBranch size={16} style={{ color: "var(--brand)" }} />}
+            legend={CC_LEGEND}
+            scrollable
+          >
+            <CCChart perFile={report.cyclomatic_complexity.summary.per_file} />
+          </ChartCardWithLegend>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
-                  <Wrench size={16} style={{ color: "var(--brand)" }} />
-                  Índice de Manutenibilidade
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <MIChart perFile={report.maintainability_index.summary.per_file} />
-              </div>
-              <ChartLegend items={MI_LEGEND} />
-            </CardBody>
-          </Card>
+          <ChartCardWithLegend
+            title="Índice de Manutenibilidade"
+            icon={<Wrench size={16} style={{ color: "var(--brand)" }} />}
+            legend={MI_LEGEND}
+            scrollable
+          >
+            <MIChart perFile={report.maintainability_index.summary.per_file} />
+          </ChartCardWithLegend>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
-                  <ShieldCheck size={16} style={{ color: "var(--brand)" }} />
-                  Cobertura de Testes
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardBody>
-              <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CoverageChart byFile={report.test_coverage.by_file} />
-              </div>
-              <ChartLegend items={COVERAGE_LEGEND} />
-            </CardBody>
-          </Card>
+          <ChartCardWithLegend
+            title="Cobertura de Testes"
+            icon={<ShieldCheck size={16} style={{ color: "var(--brand)" }} />}
+            legend={COVERAGE_LEGEND}
+            scrollable
+          >
+            <CoverageChart byFile={report.test_coverage.by_file} />
+          </ChartCardWithLegend>
 
-          <Card className="flex flex-col">
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
-                  <AlertTriangle size={16} style={{ color: "var(--brand)" }} />
-                  Issues Pylint{" "}
-                  <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>
-                    ({report.pylint.summary.total_issues})
-                  </span>
+          <ChartCardWithLegend
+            title={
+              <>
+                Issues Pylint{" "}
+                <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>
+                  ({report.pylint.summary.total_issues})
                 </span>
-              </CardTitle>
-            </CardHeader>
-            <CardBody className="flex-1 flex flex-col">
-              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                <PylintChart
-                  byType={report.pylint.summary.by_type}
-                  score={report.pylint.summary.score}
-                />
-              </div>
-              <ChartLegend items={PYLINT_LEGEND} />
-            </CardBody>
-          </Card>
+              </>
+            }
+            icon={<AlertTriangle size={16} style={{ color: "var(--brand)" }} />}
+            legend={PYLINT_LEGEND}
+          >
+            <PylintChart
+              byType={report.pylint.summary.by_type}
+              score={report.pylint.summary.score}
+            />
+          </ChartCardWithLegend>
         </section>
 
         {/* Halstead */}
