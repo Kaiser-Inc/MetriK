@@ -174,9 +174,3 @@ e2e/
   home.spec.ts              # Testes: filtro de stack, badges, sessionStorage
   report-stacks.spec.ts     # Testes: labels dinâmicos por stack no dashboard
 ```
-
----
-
-## Tópicos sugeridos para o repositório
-
-`code-quality` `metrics` `dashboard` `nextjs` `typescript` `recharts` `vercel` `kaiserinc` `multi-stack` `python` `nodejs` `ruby` `fastapi` `fastify` `rails` `coverage` `static-analysis`
