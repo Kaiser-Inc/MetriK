@@ -87,16 +87,6 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
       <TopBar logo={<MetriKLogo />} actions={<TutorialModal />} />
 
-      {/* Stack filter bar */}
-      <div
-        className="border-b"
-        style={{ background: "var(--bg-base)", borderColor: "var(--border-default)" }}
-      >
-        <div className="max-w-6xl mx-auto w-full px-6 py-2.5">
-          <StackFilter value={stackFilter} onChange={handleStackFilter} />
-        </div>
-      </div>
-
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
         {/* Error state (local mode only) */}
         {!deployMode && error && (
@@ -164,7 +154,7 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
           <>
             {/* Hero header */}
             <div
-              className="mk-dot-grid relative mb-8 rounded-2xl overflow-hidden"
+              className="mk-dot-grid relative mb-4 rounded-2xl overflow-hidden"
               style={{
                 background: "var(--bg-elevated)",
                 border: "1px solid var(--border-default)",
@@ -265,6 +255,11 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
                     : "Análises ordenadas da mais recente à mais antiga"}
                 </p>
               </div>
+            </div>
+
+            {/* Stack filter */}
+            <div className="mb-4">
+              <StackFilter value={stackFilter} onChange={handleStackFilter} />
             </div>
 
             {/* Empty state */}

@@ -14,7 +14,7 @@ interface StackFilterProps {
 
 export function StackFilter({ value, onChange }: StackFilterProps) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center justify-center gap-2 flex-wrap">
       <button
         onClick={() => onChange("all")}
         className={[
