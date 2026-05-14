@@ -42,16 +42,12 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
   useEffect(() => {
     if (serverReport) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     const items = loadReportsFromSession();
     const match = items?.find((i) => i.slug === slug);
     if (match?.rawJson) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setReport(match.rawJson);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormattedDate(formatDate(match.rawJson.generated_at, "long"));
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNotFound(true);
     }
   }, [serverReport, slug]);
@@ -139,7 +135,6 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
       {topBar(report.project)}
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8 flex flex-col gap-8">
-        {/* Project eyebrow header */}
         <div
           className="mk-dot-grid relative rounded-2xl overflow-hidden -mt-4"
           style={{
@@ -204,12 +199,10 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
           </div>
         </div>
 
-        {/* Summary stats */}
         <section>
           <SummaryCards report={report} />
         </section>
 
-        {/* Charts */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ChartCardWithLegend
             title="Complexidade Ciclomática"
@@ -260,12 +253,10 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
           </ChartCardWithLegend>
         </section>
 
-        {/* Halstead */}
         <section>
           <HalsteadSection report={report} />
         </section>
 
-        {/* Xenon */}
         <section>
           <XenonBadge xenon={report.xenon} secLabel={stackMeta.secLabel} />
         </section>

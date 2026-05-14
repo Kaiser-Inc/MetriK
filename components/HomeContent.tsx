@@ -23,11 +23,9 @@ interface Props {
 export function HomeContent({ items: initialItems, error, deployMode = false }: Props) {
   const router = useRouter();
 
-  // Deploy mode: manage items in state
   const [deployItems, setDeployItems] = useState<EnrichedItem[]>([]);
   const [deployLoaded, setDeployLoaded] = useState(false);
 
-  // Stack filter
   const [stackFilter, setStackFilter] = useState<StackFilterValue>(() => {
     if (typeof window !== "undefined") {
       return (sessionStorage.getItem("metrik-stack-filter") as StackFilterValue) ?? "all";
@@ -40,18 +38,14 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
     sessionStorage.setItem("metrik-stack-filter", value);
   };
 
-  // Compare mode
   const [compareMode, setCompareMode] = useState(false);
   const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
 
-  // Load from sessionStorage on mount (deploy mode)
   useEffect(() => {
     if (!deployMode) return;
     const cached = loadReportsFromSession();
     if (cached?.length) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDeployItems(cached);
-       
       setDeployLoaded(true);
     }
   }, [deployMode]);
@@ -74,7 +68,6 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
     setSelectedSlugs([]);
   };
 
-  // In local mode: use FilePicker results if loaded, else server-rendered items
   const allItems = deployMode
     ? deployItems
     : deployLoaded ? deployItems : initialItems;
@@ -88,7 +81,6 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
       <TopBar logo={<MetriKLogo />} actions={<TutorialModal />} />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
-        {/* Error state (local mode only) */}
         {!deployMode && error && (
           <div className="flex justify-center py-16">
             <EmptyState
@@ -111,7 +103,6 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
           </div>
         )}
 
-        {/* Deploy mode — FilePicker quando vazio */}
         {deployMode && !deployLoaded && (
           <div className="flex flex-col items-center justify-center py-20 gap-8">
             <div
@@ -149,10 +140,8 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
           </div>
         )}
 
-        {/* Reports list */}
         {(!deployMode || deployLoaded) && !error && (
           <>
-            {/* Hero header */}
             <div
               className="mk-dot-grid relative mb-4 rounded-2xl overflow-hidden"
               style={{
@@ -191,14 +180,11 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
                     </Badge>
                   </div>
 
-                  {/* Action buttons */}
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                    {/* Deploy mode: FilePicker + Atualizar inline */}
                     {deployMode && deployLoaded && (
                       <FilePicker onLoad={handleDeployLoad} compact />
                     )}
 
-                    {/* Local mode: Atualizar lista + FilePicker opcional */}
                     {!deployMode && (
                       <>
                       <FilePicker onLoad={handleDeployLoad} compact />
@@ -224,7 +210,6 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
                       </>
                     )}
 
-                    {/* Compare toggle */}
                     {items.length >= 2 && (
                       <button
                         onClick={() => compareMode ? clearCompare() : setCompareMode(true)}
@@ -257,12 +242,10 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
               </div>
             </div>
 
-            {/* Stack filter */}
             <div className="mb-4">
               <StackFilter value={stackFilter} onChange={handleStackFilter} />
             </div>
 
-            {/* Empty state */}
             {items.length === 0 ? (
               <div className="flex justify-center py-16">
                 <EmptyState
@@ -290,7 +273,6 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
 
       <Footer />
 
-      {/* Floating compare bar */}
       {compareMode && selectedSlugs.length > 0 && (
         <CompareBar
           slugA={selectedSlugs[0] ?? null}

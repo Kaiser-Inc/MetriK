@@ -8,11 +8,6 @@ interface Props {
   decimals?: number;
 }
 
-/**
- * Mostra delta entre relatório A e B.
- * higherIsBetter=true (padrão): subir é bom (cobertura, MI, score)
- * higherIsBetter=false: subir é ruim (CC, bugs Halstead)
- */
 export function DeltaBadge({ valueA, valueB, higherIsBetter = true, unit = "", decimals = 1 }: Props) {
   const delta = valueB - valueA;
   if (Math.abs(delta) < 0.001) {
