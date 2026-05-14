@@ -1,4 +1,5 @@
 import type { EnrichedItem, MetricsReport } from "@/types/metrics";
+import { deriveStack } from "@/types/metrics";
 
 const STORAGE_KEY = "metrik-reports";
 
@@ -10,10 +11,12 @@ export const hasDirectoryPicker = (): boolean =>
 function enrichFromJson(json: Record<string, unknown>, slug: string): EnrichedItem {
   const cc = (json.cyclomatic_complexity as Record<string, unknown> | undefined)
     ?.summary as Record<string, unknown> | undefined;
+  const project = (json.project as string) ?? slug;
   return {
     slug,
     generated_at: (json.generated_at as string) ?? "",
-    project: (json.project as string) ?? slug,
+    project,
+    stack: deriveStack(project),
     cc_grade: cc?.grade as string | undefined,
     coverage_percent: (json.test_coverage as Record<string, unknown> | undefined)
       ?.percent as number | undefined,

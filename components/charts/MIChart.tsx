@@ -6,6 +6,7 @@ import {
   Tooltip, ReferenceLine, Cell, ResponsiveContainer,
 } from "recharts";
 import { CHART_COLORS, TOOLTIP_STYLE, TOOLTIP_LABEL_STYLE, TOOLTIP_ITEM_STYLE, REF_LINE_STYLE, miColor } from "@/lib/chartTheme";
+import { ChartUnavailable } from "./ChartUnavailable";
 
 interface Props {
   perFile: Record<string, number>;
@@ -19,6 +20,10 @@ export function MIChart({ perFile, exportRef }: Props) {
   const data = Object.entries(perFile)
     .sort(([, a], [, b]) => a - b)
     .map(([file, value]) => ({ file: file.split("/").pop() ?? file, value: Number(value.toFixed(1)) }));
+
+  if (data.length === 0) {
+    return <ChartUnavailable message="Índice de Manutenibilidade não disponível para esta stack" minHeight={MIN_HEIGHT} exportRef={exportRef} />;
+  }
 
   const height = Math.max(MIN_HEIGHT, data.length * BAR_HEIGHT);
 

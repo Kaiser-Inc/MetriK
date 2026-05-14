@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { TopBar } from "@kaiserinc/react";
 import { ArrowLeft, GitCompareArrows } from "lucide-react";
 import Link from "next/link";
-import { MetriKaLogo } from "@/components/MetriKaLogo";
+import { MetriKLogo } from "@/components/MetriKLogo";
 import { Footer } from "@/components/Footer";
 import { TutorialModal } from "@/components/TutorialModal";
 import { DeltaBadge } from "./DeltaBadge";
@@ -17,6 +17,8 @@ import { CC_LEGEND, MI_LEGEND, COVERAGE_LEGEND, PYLINT_LEGEND } from "@/lib/char
 import { loadReportsFromSession } from "@/lib/fileSystem";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
+import { STACK_META, deriveStack } from "@/types/metrics";
+import { isCCAvailable, isMIAvailable, isCoverageAvailable } from "@/lib/metricAvailability";
 
 interface Props {
   reportA: MetricsReport | null;
@@ -55,7 +57,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
   if (!sessionChecked) {
     return (
       <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
-        <TopBar logo={<MetriKaLogo />} />
+        <TopBar logo={<MetriKLogo />} />
         <main className="flex-1 flex items-center justify-center">
           <p style={{ color: "var(--fg-3)" }}>Carregando relatórios…</p>
         </main>
@@ -68,7 +70,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
   if (!reportA || !reportB) {
     return (
       <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
-        <TopBar logo={<MetriKaLogo />} />
+        <TopBar logo={<MetriKLogo />} />
         <main className="flex-1 flex items-center justify-center flex-col gap-4">
           <p style={{ fontSize: "1rem", fontWeight: 600, color: "var(--fg-2)" }}>
             Relatórios não encontrados
@@ -88,21 +90,24 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
   }
 
   const cc = {
-    a: reportA.cyclomatic_complexity.summary.average,
-    b: reportB.cyclomatic_complexity.summary.average,
+    a: isCCAvailable(reportA) ? reportA.cyclomatic_complexity.summary.average : null,
+    b: isCCAvailable(reportB) ? reportB.cyclomatic_complexity.summary.average : null,
   };
   const mi = {
-    a: reportA.maintainability_index.summary.average,
-    b: reportB.maintainability_index.summary.average,
+    a: isMIAvailable(reportA) ? reportA.maintainability_index.summary.average : null,
+    b: isMIAvailable(reportB) ? reportB.maintainability_index.summary.average : null,
   };
   const cov = {
-    a: reportA.test_coverage.percent,
-    b: reportB.test_coverage.percent,
+    a: isCoverageAvailable(reportA) ? reportA.test_coverage.percent : null,
+    b: isCoverageAvailable(reportB) ? reportB.test_coverage.percent : null,
   };
   const pylint = {
-    a: reportA.pylint.summary.score ?? 10,
-    b: reportB.pylint.summary.score ?? 10,
+    a: reportA.pylint.summary.score,
+    b: reportB.pylint.summary.score,
   };
+
+  const stackMetaA = STACK_META[deriveStack(reportA.project)];
+  const stackMetaB = STACK_META[deriveStack(reportB.project)];
 
   // File-level diff: union of files from both reports
   const ccFiles = new Set([
@@ -136,7 +141,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
       <TopBar
-        logo={<MetriKaLogo />}
+        logo={<MetriKLogo />}
         className="relative"
         actions={
           <>
@@ -193,26 +198,33 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
         <section>
           <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--fg-2)" }}>Resumo</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: "CC Médio", a: cc.a, b: cc.b, higherIsBetter: false, unit: "" },
-              { title: "MI Médio", a: mi.a, b: mi.b, higherIsBetter: true, unit: "" },
-              { title: "Cobertura", a: cov.a, b: cov.b, higherIsBetter: true, unit: "%" },
-              { title: "Pylint Score", a: pylint.a, b: pylint.b, higherIsBetter: true, unit: "/10", decimals: 2 },
-            ].map(({ title, a, b, higherIsBetter, unit, decimals }) => (
-              <div key={title} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-                <p style={{ fontSize: "0.72rem", color: "var(--fg-4)", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>{title}</p>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--fg-1)" }}>
-                    {a.toFixed(decimals ?? 1)}{unit === "/10" ? "" : unit}
-                  </span>
-                  <span style={{ color: "var(--fg-4)", fontSize: "0.8rem" }}>→</span>
-                  <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--fg-1)" }}>
-                    {b.toFixed(decimals ?? 1)}{unit === "/10" ? "" : unit}
-                  </span>
+            {([
+              { title: "CC Médio",     a: cc.a,     b: cc.b,     higherIsBetter: false, unit: ""    },
+              { title: "MI Médio",     a: mi.a,     b: mi.b,     higherIsBetter: true,  unit: ""    },
+              { title: "Cobertura",    a: cov.a,    b: cov.b,    higherIsBetter: true,  unit: "%"   },
+              { title: "Linter Score", a: pylint.a, b: pylint.b, higherIsBetter: true,  unit: "/10", decimals: 2 },
+            ] as { title: string; a: number | null; b: number | null; higherIsBetter: boolean; unit: string; decimals?: number }[])
+            .map(({ title, a, b, higherIsBetter, unit, decimals }) => {
+              const unavailable = a === null || b === null;
+              const fmt = (v: number) => `${v.toFixed(decimals ?? 1)}${unit === "/10" ? "/10" : unit}`;
+              return (
+                <div key={title} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <p style={{ fontSize: "0.72rem", color: "var(--fg-4)", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>{title}</p>
+                  {unavailable ? (
+                    <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--fg-3)" }}>N/A</span>
+                  ) : (
+                    <>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--fg-1)" }}>{fmt(a!)}</span>
+                        <span style={{ color: "var(--fg-4)", fontSize: "0.8rem" }}>→</span>
+                        <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--fg-1)" }}>{fmt(b!)}</span>
+                      </div>
+                      <DeltaBadge valueA={a!} valueB={b!} higherIsBetter={higherIsBetter} unit={unit === "/10" ? "" : unit} decimals={decimals ?? 1} />
+                    </>
+                  )}
                 </div>
-                <DeltaBadge valueA={a} valueB={b} higherIsBetter={higherIsBetter} unit={unit === "/10" ? "" : unit} decimals={decimals ?? 1} />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -221,65 +233,48 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
           <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--fg-2)" }}>Gráficos</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* CC */}
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
-              <p style={{ marginBottom: 8 }}>{label(reportA.project)} — CC</p>
-              <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CCChart perFile={reportA.cyclomatic_complexity.summary.per_file} />
+            {[reportA, reportB].map((r) => (
+              <div key={r.generated_at + "-cc"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
+                <p style={{ marginBottom: 8 }}>{label(r.project)} — CC</p>
+                <div style={{ flex: 1, minHeight: 0, maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent", display: "flex", flexDirection: "column" }}>
+                  <CCChart perFile={r.cyclomatic_complexity.summary.per_file} />
+                </div>
+                <ChartLegend items={CC_LEGEND} />
               </div>
-              <ChartLegend items={CC_LEGEND} />
-            </div>
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
-              <p style={{ marginBottom: 8 }}>{label(reportB.project)} — CC</p>
-              <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CCChart perFile={reportB.cyclomatic_complexity.summary.per_file} />
-              </div>
-              <ChartLegend items={CC_LEGEND} />
-            </div>
+            ))}
             {/* Coverage */}
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
-              <p style={{ marginBottom: 8 }}>{label(reportA.project)} — Cobertura</p>
-              <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CoverageChart byFile={reportA.test_coverage.by_file} />
+            {[reportA, reportB].map((r) => (
+              <div key={r.generated_at + "-cov"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
+                <p style={{ marginBottom: 8 }}>{label(r.project)} — Cobertura</p>
+                <div style={{ flex: 1, minHeight: 0, maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent", display: "flex", flexDirection: "column" }}>
+                  <CoverageChart byFile={r.test_coverage.by_file} />
+                </div>
+                <ChartLegend items={COVERAGE_LEGEND} />
               </div>
-              <ChartLegend items={COVERAGE_LEGEND} />
-            </div>
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
-              <p style={{ marginBottom: 8 }}>{label(reportB.project)} — Cobertura</p>
-              <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <CoverageChart byFile={reportB.test_coverage.by_file} />
-              </div>
-              <ChartLegend items={COVERAGE_LEGEND} />
-            </div>
+            ))}
             {/* MI */}
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
-              <p style={{ marginBottom: 8 }}>{label(reportA.project)} — MI</p>
-              <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <MIChart perFile={reportA.maintainability_index.summary.per_file} />
+            {[reportA, reportB].map((r) => (
+              <div key={r.generated_at + "-mi"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
+                <p style={{ marginBottom: 8 }}>{label(r.project)} — MI</p>
+                <div style={{ flex: 1, minHeight: 0, maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent", display: "flex", flexDirection: "column" }}>
+                  <MIChart perFile={r.maintainability_index.summary.per_file} />
+                </div>
+                <ChartLegend items={MI_LEGEND} />
               </div>
-              <ChartLegend items={MI_LEGEND} />
-            </div>
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20 }}>
-              <p style={{ marginBottom: 8 }}>{label(reportB.project)} — MI</p>
-              <div style={{ maxHeight: 320, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-                <MIChart perFile={reportB.maintainability_index.summary.per_file} />
-              </div>
-              <ChartLegend items={MI_LEGEND} />
-            </div>
+            ))}
             {/* Pylint */}
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column" }}>
-              <p style={{ marginBottom: 8 }}>{label(reportA.project)} — Pylint</p>
-              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                <PylintChart byType={reportA.pylint.summary.by_type} score={reportA.pylint.summary.score} />
+            {([
+              { r: reportA, meta: stackMetaA },
+              { r: reportB, meta: stackMetaB },
+            ]).map(({ r, meta }) => (
+              <div key={r.generated_at + "-pylint"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
+                <p style={{ marginBottom: 8 }}>{label(r.project)} — {meta.lintLabel}</p>
+                <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+                  <PylintChart byType={r.pylint.summary.by_type} score={r.pylint.summary.score} lintLabel={meta.lintLabel} />
+                </div>
+                <ChartLegend items={PYLINT_LEGEND} />
               </div>
-              <ChartLegend items={PYLINT_LEGEND} />
-            </div>
-            <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column" }}>
-              <p style={{ marginBottom: 8 }}>{label(reportB.project)} — Pylint</p>
-              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                <PylintChart byType={reportB.pylint.summary.by_type} score={reportB.pylint.summary.score} />
-              </div>
-              <ChartLegend items={PYLINT_LEGEND} />
-            </div>
+            ))}
           </div>
         </section>
 

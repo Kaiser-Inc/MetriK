@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { Card, CardBody } from "@kaiserinc/react";
 import { GitBranch, Shield, CheckCircle2, XCircle, ChevronRight } from "lucide-react";
 import type { EnrichedItem } from "@/types/metrics";
+import { STACK_META, deriveStack } from "@/types/metrics";
+import { StackIcon } from "@/components/icons/StackIcon";
 import { formatDate } from "@/lib/formatDate";
 
 interface Props {
@@ -15,6 +17,9 @@ interface Props {
 
 export function ReportCard({ report, compareMode = false, selected = false, onSelect }: Props) {
   const router = useRouter();
+
+  const stack = report.stack ?? deriveStack(report.project);
+  const stackMeta = STACK_META[stack];
 
   const coverageColor =
     report.coverage_percent == null ? "var(--fg-3)"
@@ -51,7 +56,17 @@ export function ReportCard({ report, compareMode = false, selected = false, onSe
         <div className="flex flex-col gap-3">
           {/* Header — title + action icon */}
           <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
+              {/* Stack badge */}
+              <div className="flex items-center gap-1.5 mb-1">
+                <StackIcon stack={stack} size={12} />
+                <span
+                  className="text-xs font-medium"
+                  style={{ color: stackMeta.color, fontSize: "0.68rem" }}
+                >
+                  {stackMeta.label}
+                </span>
+              </div>
               <h2
                 className="font-semibold text-sm leading-tight truncate"
                 style={{ color: "var(--fg-1)" }}
@@ -116,7 +131,7 @@ export function ReportCard({ report, compareMode = false, selected = false, onSe
                 : report.xenon_passed
                 ? <CheckCircle2 size={14} style={{ color: "var(--success-500)" }} />
                 : <XCircle size={14} style={{ color: "var(--danger-500)" }} />}
-              <span style={{ color: "var(--fg-3)", fontSize: "0.65rem" }}>Xenon</span>
+              <span style={{ color: "var(--fg-3)", fontSize: "0.65rem" }}>{stackMeta.secLabel}</span>
               <span className="text-xs font-semibold" style={{ color: xenonColor }}>
                 {report.xenon_passed == null ? "—" : report.xenon_passed ? "Passou" : "Falhou"}
               </span>

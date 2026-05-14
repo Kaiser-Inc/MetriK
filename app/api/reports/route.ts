@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
 import type { ReportListItem } from "@/types/metrics";
+import { deriveStack } from "@/types/metrics";
 
 export async function GET() {
   const metricsDir = process.env.METRICS_DIR;
@@ -24,10 +25,12 @@ export async function GET() {
         const raw = await fs.readFile(path.join(metricsDir, file), "utf-8");
         const json = JSON.parse(raw) as Record<string, unknown>;
         const slug = file.replace(/\.json$/, "");
+        const project = (json.project as string) ?? slug;
         items.push({
           slug,
           generated_at: (json.generated_at as string) ?? "",
-          project: (json.project as string) ?? slug,
+          project,
+          stack: deriveStack(project),
         });
       } catch {
         // skip invalid files

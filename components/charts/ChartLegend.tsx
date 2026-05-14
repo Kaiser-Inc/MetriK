@@ -14,7 +14,7 @@ export function ChartLegend({ items }: Props) {
         flexWrap: "wrap",
         justifyContent: "center",
         gap: "6px 14px",
-        marginTop: 10,
+        marginTop: "auto",
         paddingTop: 10,
         borderTop: "1px solid var(--border-default)",
         fontSize: 11,

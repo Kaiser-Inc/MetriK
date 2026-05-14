@@ -1,3 +1,22 @@
+export type Stack = 'python-fastapi' | 'node-fastify' | 'ruby-on-rails';
+
+export const STACK_META: Record<Stack, {
+  label: string;
+  color: string;
+  lintLabel: string;
+  secLabel: string;
+}> = {
+  'python-fastapi': { label: 'Python', color: '#3776AB', lintLabel: 'Pylint',   secLabel: 'Xenon' },
+  'node-fastify':   { label: 'Node',   color: '#339933', lintLabel: 'Biome',    secLabel: 'npm audit' },
+  'ruby-on-rails':  { label: 'Ruby',   color: '#CC342D', lintLabel: 'RuboCop',  secLabel: 'bundler-audit' },
+};
+
+export function deriveStack(project: string): Stack {
+  if (project === 'node-fastify') return 'node-fastify';
+  if (project === 'ruby-on-rails') return 'ruby-on-rails';
+  return 'python-fastapi';
+}
+
 export type MetricsReport = {
   generated_at: string;
   project: string;
@@ -57,6 +76,7 @@ export type ReportListItem = {
   slug: string;
   generated_at: string;
   project: string;
+  stack: Stack;
 };
 
 export type EnrichedItem = ReportListItem & {
