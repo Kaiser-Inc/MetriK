@@ -9,7 +9,6 @@ interface Props {
   icon: React.ReactNode;
   legend: LegendItem[];
   children: React.ReactNode;
-  /** Wrap children in a scrollable container (max-height 420px). Default: false. */
   scrollable?: boolean;
 }
 

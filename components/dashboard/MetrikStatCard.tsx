@@ -38,7 +38,6 @@ export function MetrikStatCard({ label, value, trend, description, icon }: Props
         minWidth: 0,
       }}
     >
-      {/* Label + icon */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--fg-3)" }}>
           {label}
@@ -62,7 +61,6 @@ export function MetrikStatCard({ label, value, trend, description, icon }: Props
         )}
       </div>
 
-      {/* Value */}
       <span
         style={{
           fontSize: "1.875rem",
@@ -77,7 +75,6 @@ export function MetrikStatCard({ label, value, trend, description, icon }: Props
         {value}
       </span>
 
-      {/* Trend — below value */}
       {trend && (
         <span
           style={{
@@ -91,7 +88,6 @@ export function MetrikStatCard({ label, value, trend, description, icon }: Props
         </span>
       )}
 
-      {/* Description */}
       {description && (
         <p style={{ fontSize: "0.75rem", color: "var(--fg-4)", margin: 0, lineHeight: 1.4 }}>
           {description}
