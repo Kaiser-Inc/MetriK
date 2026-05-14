@@ -37,23 +37,19 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
   const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
-    // Always try sessionStorage when props are null (covers deploy mode + FilePicker in local mode)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (propA && propB) { setSessionChecked(true); return; }
     const cached = loadReportsFromSession();
     if (cached) {
       const itemA = cached.find((i) => i.slug === slugA);
       const itemB = cached.find((i) => i.slug === slugB);
-       
+
       if (itemA?.rawJson) { setReportA(itemA.rawJson); setDA(formatDate(itemA.generated_at, "long")); }
-       
+
       if (itemB?.rawJson) { setReportB(itemB.rawJson); setDB(formatDate(itemB.generated_at, "long")); }
     }
-     
     setSessionChecked(true);
   }, [propA, propB, slugA, slugB]);
 
-  // Still loading from session
   if (!sessionChecked) {
     return (
       <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
@@ -66,7 +62,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
     );
   }
 
-  // Session checked but still no data
   if (!reportA || !reportB) {
     return (
       <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
@@ -109,7 +104,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
   const stackMetaA = STACK_META[deriveStack(reportA.project)];
   const stackMetaB = STACK_META[deriveStack(reportB.project)];
 
-  // File-level diff: union of files from both reports
   const ccFiles = new Set([
     ...Object.keys(reportA.cyclomatic_complexity.summary.per_file),
     ...Object.keys(reportB.cyclomatic_complexity.summary.per_file),
@@ -126,7 +120,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
     const covB = reportB.test_coverage.by_file[f] ?? null;
     return { fname, ccA, ccB, covA, covB };
   }).sort((a, b) => {
-    // Sort by biggest CC delta
     const dA2 = a.ccA != null && a.ccB != null ? Math.abs(a.ccB - a.ccA) : 0;
     const dB2 = b.ccA != null && b.ccB != null ? Math.abs(b.ccB - b.ccA) : 0;
     return dB2 - dA2;
@@ -166,7 +159,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
       />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8 flex flex-col gap-8">
-        {/* Header */}
         <div
           className="mk-dot-grid relative rounded-2xl overflow-hidden"
           style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", padding: "28px 32px 24px" }}
@@ -194,7 +186,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
           </div>
         </div>
 
-        {/* Summary deltas */}
         <section>
           <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--fg-2)" }}>Resumo</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -228,11 +219,9 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
           </div>
         </section>
 
-        {/* Charts side-by-side */}
         <section>
           <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--fg-2)" }}>Gráficos</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* CC */}
             {[reportA, reportB].map((r) => (
               <div key={r.generated_at + "-cc"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
                 <p style={{ marginBottom: 8 }}>{label(r.project)} — CC</p>
@@ -242,7 +231,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
                 <ChartLegend items={CC_LEGEND} />
               </div>
             ))}
-            {/* Coverage */}
             {[reportA, reportB].map((r) => (
               <div key={r.generated_at + "-cov"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
                 <p style={{ marginBottom: 8 }}>{label(r.project)} — Cobertura</p>
@@ -252,7 +240,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
                 <ChartLegend items={COVERAGE_LEGEND} />
               </div>
             ))}
-            {/* MI */}
             {[reportA, reportB].map((r) => (
               <div key={r.generated_at + "-mi"} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, padding: 20, minHeight: 380, display: "flex", flexDirection: "column" }}>
                 <p style={{ marginBottom: 8 }}>{label(r.project)} — MI</p>
@@ -262,7 +249,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
                 <ChartLegend items={MI_LEGEND} />
               </div>
             ))}
-            {/* Pylint */}
             {([
               { r: reportA, meta: stackMetaA },
               { r: reportB, meta: stackMetaB },
@@ -278,7 +264,6 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
           </div>
         </section>
 
-        {/* File-level diff table */}
         <section>
           <h2 className="text-sm font-semibold mb-4" style={{ color: "var(--fg-2)" }}>Diff por Arquivo</h2>
           <div style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)", borderRadius: 12, overflow: "hidden" }}>

@@ -140,7 +140,6 @@ export function TutorialModal() {
         <DialogBody>
           <div style={{ display: "flex", flexDirection: "column", gap: 28, maxHeight: "70vh", overflowY: "auto", paddingRight: 4 }}>
 
-            {/* O que é */}
             <section>
               <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--brand)", marginBottom: 8 }}>
                 O que é
@@ -160,7 +159,6 @@ export function TutorialModal() {
               </p>
             </section>
 
-            {/* Modos de uso */}
             <section>
               <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--brand)", marginBottom: 12 }}>
                 Modos de uso
@@ -197,7 +195,6 @@ export function TutorialModal() {
               </div>
             </section>
 
-            {/* Gerar relatórios */}
             <section>
               <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--brand)", marginBottom: 12 }}>
                 Gerando relatórios
@@ -252,7 +249,6 @@ export function TutorialModal() {
               </p>
             </section>
 
-            {/* As 6 métricas */}
             <section>
               <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--brand)", marginBottom: 12 }}>
                 As 6 métricas
@@ -304,7 +300,6 @@ export function TutorialModal() {
               </div>
             </section>
 
-            {/* Comparativo */}
             <section>
               <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--brand)", marginBottom: 8 }}>
                 Comparando relatórios

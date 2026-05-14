@@ -18,7 +18,6 @@ export function MetriKLogo() {
         priority
       />
 
-      {/* Separador */}
       <span style={{
         width: 1,
         height: 16,
@@ -28,7 +27,6 @@ export function MetriKLogo() {
         opacity: 0.6,
       }} />
 
-      {/* Nome do produto */}
       <span
         style={{
           fontFamily: "Roboto, sans-serif",

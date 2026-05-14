@@ -12,7 +12,6 @@ import { formatDate } from "@/lib/formatDate";
 
 interface Props {
   onLoad: (items: EnrichedItem[]) => void;
-  /** Render only buttons, no status text — for inline use inside flex rows */
   compact?: boolean;
 }
 
@@ -108,7 +107,6 @@ export function FilePicker({ onLoad, compact = false }: Props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: compact ? 0 : 12 }}>
-      {/* Buttons row */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         <button style={btnBase} onClick={pickDirectory} disabled={status === "loading"}>
           <FolderOpen size={14} />
@@ -132,7 +130,6 @@ export function FilePicker({ onLoad, compact = false }: Props) {
         )}
       </div>
 
-      {/* Status — hidden in compact mode */}
       {!compact && status === "loading" && (
         <p style={{ fontSize: "0.75rem", color: "var(--fg-3)", margin: 0 }}>
           Carregando arquivos…
@@ -151,7 +148,6 @@ export function FilePicker({ onLoad, compact = false }: Props) {
         <p style={{ fontSize: "0.75rem", color: "var(--danger-500)", margin: 0 }}>{errorMsg}</p>
       )}
 
-      {/* Hidden inputs */}
       <input
         ref={dirInputRef}
         type="file"

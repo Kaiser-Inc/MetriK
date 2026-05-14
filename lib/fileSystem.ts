@@ -6,8 +6,6 @@ const STORAGE_KEY = "metrik-reports";
 export const hasDirectoryPicker = (): boolean =>
   typeof window !== "undefined" && "showDirectoryPicker" in window;
 
-// ----- Parse helpers -----
-
 function enrichFromJson(json: Record<string, unknown>, slug: string): EnrichedItem {
   const cc = (json.cyclomatic_complexity as Record<string, unknown> | undefined)
     ?.summary as Record<string, unknown> | undefined;
@@ -36,7 +34,6 @@ export async function parseFilesToItems(files: File[]): Promise<EnrichedItem[]> 
       const slug = file.name.replace(/\.json$/, "");
       items.push(enrichFromJson(json, slug));
     } catch {
-      // skip invalid
     }
   }
   return sortItems(items);
@@ -56,7 +53,6 @@ export async function parseDirectoryHandle(
       const slug = name.replace(/\.json$/, "");
       items.push(enrichFromJson(json, slug));
     } catch {
-      // skip invalid
     }
   }
   return sortItems(items);
@@ -77,13 +73,10 @@ function parseDate(value: string): Date {
   return new Date(value);
 }
 
-// ----- sessionStorage -----
-
 export function saveReportsToSession(items: EnrichedItem[]): void {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   } catch {
-    // quota exceeded or SSR
   }
 }
 
@@ -101,6 +94,5 @@ export function clearReportsFromSession(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEY);
   } catch {
-    // noop
   }
 }

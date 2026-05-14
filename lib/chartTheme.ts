@@ -65,13 +65,11 @@ export const PYLINT_TYPE_COLORS: Record<string, string> = {
   fatal:      "var(--brand)",
 };
 
-// ─── Shared chart legend ──────────────────────────────────────────────────────
-
 export type LegendItem = {
   color: string;
   label: string;
-  dash?: boolean; // linha tracejada (reference line)
-  dot?: boolean;  // círculo (categoria)
+  dash?: boolean;
+  dot?: boolean;
 };
 
 export const CC_LEGEND: LegendItem[] = [

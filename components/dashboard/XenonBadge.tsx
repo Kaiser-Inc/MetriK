@@ -22,7 +22,6 @@ export function XenonBadge({ xenon, secLabel = "Xenon" }: Props) {
         border: `1px solid ${borderColor}`,
       }}
     >
-      {/* Icon circle */}
       <div
         className="flex items-center justify-center rounded-full shrink-0"
         style={{
@@ -39,9 +38,7 @@ export function XenonBadge({ xenon, secLabel = "Xenon" }: Props) {
         )}
       </div>
 
-      {/* Content */}
       <div className="flex flex-col gap-2">
-        {/* Label + badge */}
         <div className="flex items-center gap-2">
           <span
             className="text-xs uppercase tracking-wider"
@@ -54,7 +51,6 @@ export function XenonBadge({ xenon, secLabel = "Xenon" }: Props) {
           </Badge>
         </div>
 
-        {/* Threshold chips */}
         <div className="flex flex-wrap gap-2">
           <code
             className="text-xs px-2 py-0.5 rounded"
