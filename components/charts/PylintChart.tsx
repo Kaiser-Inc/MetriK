@@ -9,17 +9,23 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { TOOLTIP_STYLE, PYLINT_TYPE_COLORS } from "@/lib/chartTheme";
+import { ChartUnavailable } from "./ChartUnavailable";
 
 interface Props {
   byType: Record<string, number>;
   score: number | null;
+  lintLabel?: string;
   exportRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function PylintChart({ byType, score, exportRef }: Props) {
+export function PylintChart({ byType, score, lintLabel = "Pylint", exportRef }: Props) {
   const data = Object.entries(byType)
     .filter(([, v]) => v > 0)
     .map(([name, value]) => ({ name, value }));
+
+  if (score === null) {
+    return <ChartUnavailable message={`${lintLabel} não configurado — dados indisponíveis`} minHeight={320} exportRef={exportRef} />;
+  }
 
   if (data.length === 0) {
     return (
@@ -39,7 +45,7 @@ export function PylintChart({ byType, score, exportRef }: Props) {
           Nenhum problema encontrado
         </p>
         <p style={{ fontSize: "0.78rem", color: "var(--fg-4)", margin: 0 }}>
-          Score Pylint:{" "}
+          {`Score ${lintLabel}:`}{" "}
           <span style={{ color: "var(--success-500)", fontWeight: 700 }}>
             {score != null ? `${score}/10` : "10/10"}
           </span>

@@ -6,9 +6,10 @@ import type { MetricsReport } from "@/types/metrics";
 
 interface Props {
   xenon: MetricsReport["xenon"];
+  secLabel?: string;
 }
 
-export function XenonBadge({ xenon }: Props) {
+export function XenonBadge({ xenon, secLabel = "Xenon" }: Props) {
   const passed = xenon.passed;
   const iconColor = passed ? "var(--success-500)" : "var(--danger-500)";
   const borderColor = passed ? "var(--success-500)" : "var(--danger-500)";
@@ -46,7 +47,7 @@ export function XenonBadge({ xenon }: Props) {
             className="text-xs uppercase tracking-wider"
             style={{ color: "var(--fg-3)" }}
           >
-            Xenon
+            {secLabel}
           </span>
           <Badge variant={passed ? "success" : "danger"}>
             {passed ? "Passou" : "Falhou"}

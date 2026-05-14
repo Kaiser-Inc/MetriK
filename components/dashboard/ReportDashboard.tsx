@@ -11,7 +11,7 @@ import {
   Clock,
   ArrowLeft,
 } from "lucide-react";
-import { MetriKaLogo } from "@/components/MetriKaLogo";
+import { MetriKLogo } from "@/components/MetriKLogo";
 import { Footer } from "@/components/Footer";
 import { TutorialModal } from "@/components/TutorialModal";
 import { ChartCardWithLegend } from "@/components/charts/ChartCardWithLegend";
@@ -26,6 +26,8 @@ import { PylintChart } from "@/components/charts/PylintChart";
 import { loadReportsFromSession } from "@/lib/fileSystem";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
+import { STACK_META, deriveStack } from "@/types/metrics";
+import { StackIcon } from "@/components/icons/StackIcon";
 
 interface Props {
   report: MetricsReport | null;
@@ -56,7 +58,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
   const topBar = (projectName?: string) => (
     <TopBar
-      logo={<MetriKaLogo />}
+      logo={<MetriKLogo />}
       className="relative"
       actions={
         <>
@@ -129,6 +131,9 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
     );
   }
 
+  const stack = deriveStack(report.project);
+  const stackMeta = STACK_META[stack];
+
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
       {topBar(report.project)}
@@ -171,12 +176,25 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
             }}>
               Análise de Qualidade
             </p>
-            <h1
-              className="text-2xl font-bold"
-              style={{ color: "var(--fg-1)", letterSpacing: "-0.02em" }}
-            >
-              {report.project}
-            </h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1
+                className="text-2xl font-bold"
+                style={{ color: "var(--fg-1)", letterSpacing: "-0.02em" }}
+              >
+                {report.project}
+              </h1>
+              <span
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                style={{
+                  background: `${stackMeta.color}22`,
+                  color: stackMeta.color,
+                  border: `1px solid ${stackMeta.color}44`,
+                }}
+              >
+                <StackIcon stack={stack} size={13} />
+                {stackMeta.label}
+              </span>
+            </div>
             <div className="flex items-center gap-2 mt-2">
               <Clock size={12} style={{ color: "var(--fg-4)" }} />
               <span style={{ fontSize: "0.75rem", color: "var(--fg-3)" }}>
@@ -223,9 +241,11 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
           <ChartCardWithLegend
             title={
               <>
-                Issues Pylint{" "}
+                {`Issues ${stackMeta.lintLabel}`}{" "}
                 <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>
-                  ({report.pylint.summary.total_issues})
+                  {report.pylint.summary.score !== null
+                    ? `(${report.pylint.summary.total_issues})`
+                    : "(N/A)"}
                 </span>
               </>
             }
@@ -235,6 +255,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
             <PylintChart
               byType={report.pylint.summary.by_type}
               score={report.pylint.summary.score}
+              lintLabel={stackMeta.lintLabel}
             />
           </ChartCardWithLegend>
         </section>
@@ -246,7 +267,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
         {/* Xenon */}
         <section>
-          <XenonBadge xenon={report.xenon} />
+          <XenonBadge xenon={report.xenon} secLabel={stackMeta.secLabel} />
         </section>
       </main>
 

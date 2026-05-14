@@ -15,7 +15,7 @@ interface Props {
 
 export function ChartCardWithLegend({ title, icon, legend, children, scrollable = false }: Props) {
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col" style={{ minHeight: 380 }}>
       <CardHeader>
         <CardTitle>
           <span className="flex items-center gap-2">
@@ -25,15 +25,21 @@ export function ChartCardWithLegend({ title, icon, legend, children, scrollable 
         </CardTitle>
       </CardHeader>
       <CardBody className="flex-1 flex flex-col">
-        {scrollable ? (
-          <div style={{ maxHeight: 420, overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarColor: "var(--border-default) transparent" }}>
-            {children}
-          </div>
-        ) : (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            {children}
-          </div>
-        )}
+        <div style={{
+          flex: 1,
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column",
+          ...(scrollable ? {
+            maxHeight: 420,
+            overflowY: "auto",
+            overflowX: "hidden",
+            scrollbarWidth: "thin",
+            scrollbarColor: "var(--border-default) transparent",
+          } : {}),
+        }}>
+          {children}
+        </div>
         <ChartLegend items={legend} />
       </CardBody>
     </Card>

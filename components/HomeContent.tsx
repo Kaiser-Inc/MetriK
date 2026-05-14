@@ -7,11 +7,12 @@ import { FolderOpen, Settings, RefreshCw, GitCompare } from "lucide-react";
 import { ReportCard } from "@/components/ReportCard";
 import { FilePicker } from "@/components/FilePicker";
 import { CompareBar } from "@/components/CompareBar";
-import { MetriKaLogo } from "@/components/MetriKaLogo";
+import { MetriKLogo } from "@/components/MetriKLogo";
 import { Footer } from "@/components/Footer";
 import { TutorialModal } from "@/components/TutorialModal";
 import { saveReportsToSession, loadReportsFromSession } from "@/lib/fileSystem";
 import type { EnrichedItem } from "@/types/metrics";
+import { StackFilter, type StackFilterValue } from "@/components/StackFilter";
 
 interface Props {
   items: EnrichedItem[];
@@ -25,6 +26,19 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
   // Deploy mode: manage items in state
   const [deployItems, setDeployItems] = useState<EnrichedItem[]>([]);
   const [deployLoaded, setDeployLoaded] = useState(false);
+
+  // Stack filter
+  const [stackFilter, setStackFilter] = useState<StackFilterValue>(() => {
+    if (typeof window !== "undefined") {
+      return (sessionStorage.getItem("metrik-stack-filter") as StackFilterValue) ?? "all";
+    }
+    return "all";
+  });
+
+  const handleStackFilter = (value: StackFilterValue) => {
+    setStackFilter(value);
+    sessionStorage.setItem("metrik-stack-filter", value);
+  };
 
   // Compare mode
   const [compareMode, setCompareMode] = useState(false);
@@ -61,13 +75,27 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
   };
 
   // In local mode: use FilePicker results if loaded, else server-rendered items
-  const items = deployMode
+  const allItems = deployMode
     ? deployItems
     : deployLoaded ? deployItems : initialItems;
 
+  const items = stackFilter === "all"
+    ? allItems
+    : allItems.filter((item) => item.stack === stackFilter);
+
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
-      <TopBar logo={<MetriKaLogo />} actions={<TutorialModal />} />
+      <TopBar logo={<MetriKLogo />} actions={<TutorialModal />} />
+
+      {/* Stack filter bar */}
+      <div
+        className="border-b"
+        style={{ background: "var(--bg-base)", borderColor: "var(--border-default)" }}
+      >
+        <div className="max-w-6xl mx-auto w-full px-6 py-2.5">
+          <StackFilter value={stackFilter} onChange={handleStackFilter} />
+        </div>
+      </div>
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
         {/* Error state (local mode only) */}
@@ -168,7 +196,9 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
                     <h1 className="text-2xl font-bold" style={{ color: "var(--fg-1)", letterSpacing: "-0.02em" }}>
                       Relatórios
                     </h1>
-                    <Badge variant="brand">{items.length}</Badge>
+                    <Badge variant="brand">
+                      {stackFilter === "all" ? allItems.length : `${items.length} / ${allItems.length}`}
+                    </Badge>
                   </div>
 
                   {/* Action buttons */}

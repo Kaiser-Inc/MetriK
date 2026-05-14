@@ -48,7 +48,7 @@ const METRICS = [
   {
     icon: <ShieldCheck size={16} style={{ color: "var(--brand)" }} />,
     name: "Cobertura de Testes",
-    desc: "Percentual de linhas executadas pelos testes. Gerada via pytest-cov.",
+    desc: "Percentual de linhas executadas pelos testes, gerada pela ferramenta de cobertura da stack.",
     thresholds: [
       { label: "≥ 80%", badge: "Meta", color: "var(--success-500)" },
       { label: "≥ 50%", badge: "Parcial", color: "var(--warning-500)" },
@@ -57,20 +57,20 @@ const METRICS = [
   },
   {
     icon: <AlertTriangle size={16} style={{ color: "var(--brand)" }} />,
-    name: "Análise Pylint",
-    desc: "Issues estáticas por categoria: convention, refactor, warning, error, fatal. Score 0–10.",
+    name: "Análise de Linter",
+    desc: "Issues estáticas categorizadas por severidade (error, warning, info). Score 0–10 quando disponível.",
     thresholds: [],
   },
   {
     icon: <Binary size={16} style={{ color: "var(--brand)" }} />,
     name: "Métricas de Halstead",
-    desc: "Baseadas em operadores e operandos únicos: volume, dificuldade, esforço e bugs estimados.",
+    desc: "Baseadas em operadores e operandos únicos: volume, dificuldade, esforço e bugs estimados. Disponível em stacks com análise AST configurada.",
     thresholds: [],
   },
   {
     icon: <Zap size={16} style={{ color: "var(--brand)" }} />,
-    name: "Xenon",
-    desc: "Verifica se a complexidade do projeto respeita thresholds A/B/C configurados. Passa ou falha.",
+    name: "Segurança / Auditoria",
+    desc: "Verifica vulnerabilidades em dependências e problemas de segurança estáticos. Resultado: passou ou falhou.",
     thresholds: [],
   },
 ];

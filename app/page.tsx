@@ -3,6 +3,7 @@ import path from "path";
 import { parseMetricsDate } from "@/lib/formatDate";
 import { HomeContent } from "@/components/HomeContent";
 import type { EnrichedItem } from "@/types/metrics";
+import { deriveStack } from "@/types/metrics";
 
 async function getReports(): Promise<{ items: EnrichedItem[]; error?: string }> {
   const metricsDir = process.env.METRICS_DIR;
@@ -23,10 +24,12 @@ async function getReports(): Promise<{ items: EnrichedItem[]; error?: string }> 
         const cc = (json.cyclomatic_complexity as Record<string, unknown> | undefined)
           ?.summary as Record<string, unknown> | undefined;
 
+        const project = (json.project as string) ?? slug;
         items.push({
           slug,
           generated_at: (json.generated_at as string) ?? "",
-          project: (json.project as string) ?? slug,
+          project,
+          stack: deriveStack(project),
           cc_grade: cc?.grade as string | undefined,
           coverage_percent: (json.test_coverage as Record<string, unknown> | undefined)
             ?.percent as number | undefined,
