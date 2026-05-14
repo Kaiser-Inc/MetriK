@@ -37,7 +37,6 @@ async function getReports(): Promise<{ items: EnrichedItem[]; error?: string }> 
             ?.passed as boolean | undefined,
         });
       } catch {
-        // skip invalid
       }
     }
 
@@ -57,8 +56,6 @@ async function getReports(): Promise<{ items: EnrichedItem[]; error?: string }> 
 }
 
 export default async function HomePage() {
-  // Deploy mode = no METRICS_DIR configured (Vercel, shared hosting, etc.)
-  // Local mode = METRICS_DIR is set in .env.local
   const deployMode = !process.env.METRICS_DIR;
 
   if (deployMode) {

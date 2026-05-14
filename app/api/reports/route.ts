@@ -33,7 +33,6 @@ export async function GET() {
           stack: deriveStack(project),
         });
       } catch {
-        // skip invalid files
       }
     }
 

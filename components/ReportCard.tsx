@@ -54,10 +54,8 @@ export function ReportCard({ report, compareMode = false, selected = false, onSe
     >
       <CardBody>
         <div className="flex flex-col gap-3">
-          {/* Header — title + action icon */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              {/* Stack badge */}
               <div className="flex items-center gap-1.5 mb-1">
                 <StackIcon stack={stack} size={12} />
                 <span
@@ -104,10 +102,8 @@ export function ReportCard({ report, compareMode = false, selected = false, onSe
             )}
           </div>
 
-          {/* Divider */}
           <div style={{ borderTop: "1px solid var(--border-default)" }} />
 
-          {/* Metrics row */}
           <div className="grid grid-cols-3 gap-2">
             <div className="flex flex-col items-center gap-0.5">
               <GitBranch size={14} style={{ color: "var(--brand)" }} />

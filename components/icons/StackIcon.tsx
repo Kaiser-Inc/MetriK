@@ -4,9 +4,9 @@ interface StackIconProps {
   stack: Stack;
   size?: number;
   className?: string;
-  /** Override fill for single-color icons (e.g. "white" when on colored bg) */
   fill?: string;
 }
+
 
 function PythonIcon({ size }: { size: number }) {
   return (
