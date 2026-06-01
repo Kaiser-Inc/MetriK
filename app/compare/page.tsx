@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { parseReport } from "@/lib/parseReport";
+import { migrate } from "@/lib/parseReport";
 import { CompareContent } from "@/components/dashboard/CompareContent";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
@@ -10,7 +10,7 @@ async function getReport(slug: string): Promise<MetricsReport | null> {
   if (!metricsDir) return null;
   try {
     const raw = await fs.readFile(path.join(metricsDir, `${slug}.json`), "utf-8");
-    return parseReport(JSON.parse(raw));
+    return migrate(JSON.parse(raw), slug);
   } catch {
     return null;
   }

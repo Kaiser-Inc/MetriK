@@ -5,7 +5,7 @@ import { StackIcon } from "@/components/icons/StackIcon";
 
 export type StackFilterValue = Stack | "all";
 
-const STACKS: Stack[] = ["python-fastapi", "node-fastify", "ruby-on-rails"];
+const STACKS: Stack[] = ["python-fastapi", "node-fastify", "ruby-on-rails", "next-saas", "expo-mobile"];
 
 interface StackFilterProps {
   value: StackFilterValue;

@@ -1,8 +1,10 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
-import type { ReportListItem } from "@/types/metrics";
+import type { ReportListItem, ReportLoadError } from "@/types/metrics";
 import { deriveStack } from "@/types/metrics";
+import { migrate } from "@/lib/parseReport";
+import { parseMetricsDate } from "@/lib/formatDate";
 
 export async function GET() {
   const metricsDir = process.env.METRICS_DIR;
@@ -19,28 +21,30 @@ export async function GET() {
     const jsonFiles = files.filter((f) => f.endsWith(".json"));
 
     const items: ReportListItem[] = [];
+    const errors: ReportLoadError[] = [];
 
     for (const file of jsonFiles) {
       try {
         const raw = await fs.readFile(path.join(metricsDir, file), "utf-8");
         const json = JSON.parse(raw) as Record<string, unknown>;
         const slug = file.replace(/\.json$/, "");
-        const project = (json.project as string) ?? slug;
+        const report = migrate(json, slug);
         items.push({
           slug,
-          generated_at: (json.generated_at as string) ?? "",
-          project,
-          stack: deriveStack(project),
+          generated_at: report.generated_at,
+          project: report.project,
+          stack: deriveStack(report.project),
         });
-      } catch {
+      } catch (e) {
+        errors.push({ file, reason: e instanceof Error ? e.message : String(e) });
       }
     }
 
     items.sort((a, b) =>
-      new Date(b.generated_at).getTime() - new Date(a.generated_at).getTime()
+      parseMetricsDate(b.generated_at).getTime() - parseMetricsDate(a.generated_at).getTime()
     );
 
-    return NextResponse.json(items);
+    return NextResponse.json({ items, errors });
   } catch {
     return NextResponse.json(
       { error: `Não foi possível ler METRICS_DIR: ${metricsDir}` },

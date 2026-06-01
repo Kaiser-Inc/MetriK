@@ -1,5 +1,6 @@
-import type { EnrichedItem, MetricsReport } from "@/types/metrics";
+import type { EnrichedItem, ReportLoadError, ReportListResponse } from "@/types/metrics";
 import { deriveStack } from "@/types/metrics";
+import { migrate } from "@/lib/parseReport";
 
 const STORAGE_KEY = "metrik-reports";
 
@@ -7,25 +8,27 @@ export const hasDirectoryPicker = (): boolean =>
   typeof window !== "undefined" && "showDirectoryPicker" in window;
 
 function enrichFromJson(json: Record<string, unknown>, slug: string): EnrichedItem {
-  const cc = (json.cyclomatic_complexity as Record<string, unknown> | undefined)
-    ?.summary as Record<string, unknown> | undefined;
-  const project = (json.project as string) ?? slug;
+  const report = migrate(json, slug);
+  const cc = report.cyclomatic_complexity.summary;
   return {
     slug,
-    generated_at: (json.generated_at as string) ?? "",
-    project,
-    stack: deriveStack(project),
-    cc_grade: cc?.grade as string | undefined,
-    coverage_percent: (json.test_coverage as Record<string, unknown> | undefined)
-      ?.percent as number | undefined,
-    xenon_passed: (json.xenon as Record<string, unknown> | undefined)
-      ?.passed as boolean | undefined,
-    rawJson: json as MetricsReport,
+    generated_at: report.generated_at,
+    project: report.project,
+    stack: deriveStack(report.project),
+    cc_grade: cc.grade,
+    coverage_percent: report.test_coverage.percent,
+    security_passed: report.security.passed,
+    rawJson: report,
   };
 }
 
-export async function parseFilesToItems(files: File[]): Promise<EnrichedItem[]> {
+function reasonOf(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
+export async function parseFilesToItems(files: File[]): Promise<ReportListResponse> {
   const items: EnrichedItem[] = [];
+  const errors: ReportLoadError[] = [];
   for (const file of files) {
     if (!file.name.endsWith(".json")) continue;
     try {
@@ -33,16 +36,18 @@ export async function parseFilesToItems(files: File[]): Promise<EnrichedItem[]> 
       const json = JSON.parse(text) as Record<string, unknown>;
       const slug = file.name.replace(/\.json$/, "");
       items.push(enrichFromJson(json, slug));
-    } catch {
+    } catch (e) {
+      errors.push({ file: file.name, reason: reasonOf(e) });
     }
   }
-  return sortItems(items);
+  return { items: sortItems(items), errors };
 }
 
 export async function parseDirectoryHandle(
   handle: FileSystemDirectoryHandle
-): Promise<EnrichedItem[]> {
+): Promise<ReportListResponse> {
   const items: EnrichedItem[] = [];
+  const errors: ReportLoadError[] = [];
   for await (const [name, entry] of handle.entries()) {
     if (entry.kind !== "file" || !name.endsWith(".json")) continue;
     try {
@@ -52,10 +57,11 @@ export async function parseDirectoryHandle(
       const json = JSON.parse(text) as Record<string, unknown>;
       const slug = name.replace(/\.json$/, "");
       items.push(enrichFromJson(json, slug));
-    } catch {
+    } catch (e) {
+      errors.push({ file: name, reason: reasonOf(e) });
     }
   }
-  return sortItems(items);
+  return { items: sortItems(items), errors };
 }
 
 function sortItems(items: EnrichedItem[]): EnrichedItem[] {
@@ -68,8 +74,12 @@ function sortItems(items: EnrichedItem[]): EnrichedItem[] {
 
 function parseDate(value: string): Date {
   if (!value) return new Date(0);
-  const m = value.match(/^(\d{4}-\d{2}-\d{2})_(\d{2})(\d{2})(\d{2})$/);
-  if (m) return new Date(`${m[1]}T${m[2]}:${m[3]}:${m[4]}`);
+  // HHMMSS (6-digit: Python/Ruby)
+  const m6 = value.match(/^(\d{4}-\d{2}-\d{2})_(\d{2})(\d{2})(\d{2})$/);
+  if (m6) return new Date(`${m6[1]}T${m6[2]}:${m6[3]}:${m6[4]}`);
+  // HHMM (4-digit: Node/Next/Expo)
+  const m4 = value.match(/^(\d{4}-\d{2}-\d{2})_(\d{2})(\d{2})$/);
+  if (m4) return new Date(`${m4[1]}T${m4[2]}:${m4[3]}:00`);
   return new Date(value);
 }
 
