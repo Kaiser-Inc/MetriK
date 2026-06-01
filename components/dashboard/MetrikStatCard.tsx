@@ -22,9 +22,11 @@ interface Props {
   trend?: { value: string; direction: Direction };
   description?: string;
   icon?: ReactNode;
+  /** Optional element rendered inline after the label text (e.g. an info button). */
+  labelExtra?: ReactNode;
 }
 
-export function MetrikStatCard({ label, value, trend, description, icon }: Props) {
+export function MetrikStatCard({ label, value, trend, description, icon, labelExtra }: Props) {
   return (
     <div
       style={{
@@ -36,11 +38,17 @@ export function MetrikStatCard({ label, value, trend, description, icon }: Props
         flexDirection: "column",
         gap: 12,
         minWidth: 0,
+        minHeight: 130,
+        height: "100%",
+        boxSizing: "border-box",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--fg-3)" }}>
-          {label}
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--fg-3)" }}>
+            {label}
+          </span>
+          {labelExtra}
         </span>
         {icon && (
           <span
