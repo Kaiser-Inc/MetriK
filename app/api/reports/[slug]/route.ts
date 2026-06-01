@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
-import { parseReport } from "@/lib/parseReport";
+import { migrate } from "@/lib/parseReport";
 
 export async function GET(
   _req: Request,
@@ -24,7 +24,7 @@ export async function GET(
     const json: unknown = JSON.parse(raw);
 
     try {
-      const report = parseReport(json);
+      const report = migrate(json, slug);
       return NextResponse.json(report);
     } catch (err) {
       return NextResponse.json(

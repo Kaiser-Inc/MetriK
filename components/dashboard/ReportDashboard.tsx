@@ -18,39 +18,49 @@ import { ChartCardWithLegend } from "@/components/charts/ChartCardWithLegend";
 import { CC_LEGEND, MI_LEGEND, COVERAGE_LEGEND, PYLINT_LEGEND } from "@/lib/chartTheme";
 import { SummaryCards } from "./SummaryCards";
 import { HalsteadSection } from "./HalsteadSection";
-import { XenonBadge } from "./XenonBadge";
+import { SecurityBadge } from "./SecurityBadge";
+import { FlogBadge } from "./FlogBadge";
+import { PipAuditSection } from "./PipAuditSection";
+import { RuffSection } from "./RuffSection";
 import { CCChart } from "@/components/charts/CCChart";
 import { MIChart } from "@/components/charts/MIChart";
 import { CoverageChart } from "@/components/charts/CoverageChart";
-import { PylintChart } from "@/components/charts/PylintChart";
+import { LintChart } from "@/components/charts/LintChart";
 import { loadReportsFromSession } from "@/lib/fileSystem";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
 import { STACK_META, deriveStack } from "@/types/metrics";
 import { StackIcon } from "@/components/icons/StackIcon";
+import { isFlogAvailable, isPipAuditAvailable, isRuffAvailable } from "@/lib/metricAvailability";
 
 interface Props {
   report: MetricsReport | null;
   slug: string;
   formattedDate: string;
+  loadError?: string;
 }
 
-export function ReportDashboard({ report: serverReport, slug, formattedDate: serverDate }: Props) {
+export function ReportDashboard({ report: serverReport, slug, formattedDate: serverDate, loadError }: Props) {
   const [report, setReport] = useState<MetricsReport | null>(serverReport);
   const [formattedDate, setFormattedDate] = useState(serverDate);
-  const [notFound, setNotFound] = useState(false);
+  // Initialise notFound from loadError so no setState is needed inside the effect.
+  // loadError is a server-rendered prop and will not change after mount.
+  const [notFound, setNotFound] = useState(() => !serverReport && !!loadError);
 
   useEffect(() => {
     if (serverReport) return;
+    // loadError already handled by lazy initial state — skip sessionStorage lookup.
+    if (loadError) return;
     const items = loadReportsFromSession();
     const match = items?.find((i) => i.slug === slug);
     if (match?.rawJson) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setReport(match.rawJson);
       setFormattedDate(formatDate(match.rawJson.generated_at, "long"));
     } else {
       setNotFound(true);
     }
-  }, [serverReport, slug]);
+  }, [serverReport, slug, loadError]);
 
   const topBar = (projectName?: string) => (
     <TopBar
@@ -92,10 +102,12 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
         {topBar()}
         <main className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
           <p style={{ fontSize: "1rem", color: "var(--fg-2)", fontWeight: 600 }}>
-            Relatório não encontrado
+            {loadError ? "Relatório inválido" : "Relatório não encontrado"}
           </p>
-          <p style={{ fontSize: "0.875rem", color: "var(--fg-4)", textAlign: "center", maxWidth: 380 }}>
-            Selecione a pasta com os relatórios na página inicial para carregar este relatório.
+          <p style={{ fontSize: "0.875rem", color: "var(--fg-4)", textAlign: "center", maxWidth: 460 }}>
+            {loadError
+              ? loadError
+              : "Selecione a pasta com os relatórios na página inicial para carregar este relatório."}
           </p>
           <Link
             href="/"
@@ -129,6 +141,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
 
   const stack = deriveStack(report.project);
   const stackMeta = STACK_META[stack];
+  const { real_coverage, reported_coverage } = report.test_coverage;
 
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-base)" }}>
@@ -228,7 +241,15 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
             legend={COVERAGE_LEGEND}
             scrollable
           >
-            <CoverageChart byFile={report.test_coverage.by_file} />
+            <>
+              <CoverageChart byFile={report.test_coverage.by_file} />
+              {real_coverage !== undefined && reported_coverage !== undefined && (
+                <p style={{ fontSize: "0.78rem", color: "var(--fg-3)", margin: "8px 0 0", lineHeight: 1.5 }}>
+                  Cobertura real: <strong style={{ color: "var(--fg-1)" }}>{real_coverage.toFixed(1)}%</strong>{" "}
+                  <span style={{ color: "var(--fg-4)" }}>(reportada: {reported_coverage.toFixed(1)}%)</span>
+                </p>
+              )}
+            </>
           </ChartCardWithLegend>
 
           <ChartCardWithLegend
@@ -236,8 +257,8 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
               <>
                 {`Issues ${stackMeta.lintLabel}`}{" "}
                 <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>
-                  {report.pylint.summary.score !== null
-                    ? `(${report.pylint.summary.total_issues})`
+                  {report.lint.summary.score !== null
+                    ? `(${report.lint.summary.total_issues})`
                     : "(N/A)"}
                 </span>
               </>
@@ -245,9 +266,9 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
             icon={<AlertTriangle size={16} style={{ color: "var(--brand)" }} />}
             legend={PYLINT_LEGEND}
           >
-            <PylintChart
-              byType={report.pylint.summary.by_type}
-              score={report.pylint.summary.score}
+            <LintChart
+              byType={report.lint.summary.by_type}
+              score={report.lint.summary.score}
               lintLabel={stackMeta.lintLabel}
             />
           </ChartCardWithLegend>
@@ -257,9 +278,38 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
           <HalsteadSection report={report} />
         </section>
 
+        {/* Python: pip-audit drives the security card; xenon below is relabeled
+            as complexity thresholds. Other stacks keep the audit framing. */}
+        {isPipAuditAvailable(report) && (
+          <section>
+            <PipAuditSection pipAudit={report.pip_audit!} />
+          </section>
+        )}
+
         <section>
-          <XenonBadge xenon={report.xenon} secLabel={stackMeta.secLabel} />
+          <SecurityBadge
+            security={report.security}
+            secLabel={
+              stack === 'python-fastapi'
+                ? (isPipAuditAvailable(report)
+                    ? "Xenon · Limiares de Complexidade"
+                    : "Xenon · Segurança / Complexidade")
+                : stackMeta.secLabel
+            }
+          />
         </section>
+
+        {isRuffAvailable(report) && (
+          <section>
+            <RuffSection ruff={report.ruff!.summary} />
+          </section>
+        )}
+
+        {isFlogAvailable(report) && (
+          <section>
+            <FlogBadge flog={report.flog_score!} />
+          </section>
+        )}
       </main>
 
       <Footer />
