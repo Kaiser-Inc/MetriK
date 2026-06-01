@@ -5,12 +5,12 @@ import { CheckCircle2, XCircle } from "lucide-react";
 import type { MetricsReport } from "@/types/metrics";
 
 interface Props {
-  xenon: MetricsReport["xenon"];
+  security: MetricsReport["security"];
   secLabel?: string;
 }
 
-export function XenonBadge({ xenon, secLabel = "Xenon" }: Props) {
-  const passed = xenon.passed;
+export function SecurityBadge({ security, secLabel = "Security" }: Props) {
+  const passed = security.passed;
   const iconColor = passed ? "var(--success-500)" : "var(--danger-500)";
   const borderColor = passed ? "var(--success-500)" : "var(--danger-500)";
 
@@ -51,38 +51,40 @@ export function XenonBadge({ xenon, secLabel = "Xenon" }: Props) {
           </Badge>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <code
-            className="text-xs px-2 py-0.5 rounded"
-            style={{
-              background: "var(--bg-elevated)",
-              color: "var(--fg-2)",
-              border: "1px solid var(--border-default)",
-            }}
-          >
-            max-abs: {xenon.thresholds.max_absolute}
-          </code>
-          <code
-            className="text-xs px-2 py-0.5 rounded"
-            style={{
-              background: "var(--bg-elevated)",
-              color: "var(--fg-2)",
-              border: "1px solid var(--border-default)",
-            }}
-          >
-            max-modules: {xenon.thresholds.max_modules}
-          </code>
-          <code
-            className="text-xs px-2 py-0.5 rounded"
-            style={{
-              background: "var(--bg-elevated)",
-              color: "var(--fg-2)",
-              border: "1px solid var(--border-default)",
-            }}
-          >
-            max-avg: {xenon.thresholds.max_average}
-          </code>
-        </div>
+        {security.thresholds && (
+          <div className="flex flex-wrap gap-2">
+            <code
+              className="text-xs px-2 py-0.5 rounded"
+              style={{
+                background: "var(--bg-elevated)",
+                color: "var(--fg-2)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              max-abs: {security.thresholds.max_absolute}
+            </code>
+            <code
+              className="text-xs px-2 py-0.5 rounded"
+              style={{
+                background: "var(--bg-elevated)",
+                color: "var(--fg-2)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              max-modules: {security.thresholds.max_modules}
+            </code>
+            <code
+              className="text-xs px-2 py-0.5 rounded"
+              style={{
+                background: "var(--bg-elevated)",
+                color: "var(--fg-2)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              max-avg: {security.thresholds.max_average}
+            </code>
+          </div>
+        )}
       </div>
     </div>
   );

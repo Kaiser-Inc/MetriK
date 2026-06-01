@@ -32,9 +32,29 @@ function NodeIcon({ size }: { size: number }) {
   return <img src="/icons/node.svg" width={size} height={size} alt="Node.js" style={{ display: "block" }} />;
 }
 
+function NextIcon({ size }: { size: number }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/icons/next.svg" width={size} height={size} alt="Next.js" style={{ display: "block" }} />;
+}
+
+function ExpoIcon({ size }: { size: number }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/icons/expo.svg" width={size} height={size} alt="Expo/RN" style={{ display: "block" }} />;
+}
+
 function RubyIcon({ size }: { size: number }) {
   // eslint-disable-next-line @next/next/no-img-element
   return <img src="/icons/ruby.svg" width={size} height={size} alt="Ruby" style={{ display: "block" }} />;
+}
+
+function UnknownIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-label="Stack desconhecida">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.5" />
+      <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="16.5" r="1" fill="currentColor" />
+    </svg>
+  );
 }
 
 export function StackIcon({ stack, size = 16, className }: StackIconProps) {
@@ -42,6 +62,9 @@ export function StackIcon({ stack, size = 16, className }: StackIconProps) {
     'python-fastapi': <PythonIcon size={size} />,
     'node-fastify':   <NodeIcon size={size} />,
     'ruby-on-rails':  <RubyIcon size={size} />,
+    'next-saas':      <NextIcon size={size} />,
+    'expo-mobile':    <ExpoIcon size={size} />,
+    'unknown':        <UnknownIcon size={size} />,
   };
 
   return (

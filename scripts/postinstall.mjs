@@ -35,19 +35,25 @@ function createStubs(dir) {
   }
 }
 
-// 1. Hoisted path (node_modules/@kaiserinc/assets)
-createStubs(join(root, "node_modules/@kaiserinc/assets"));
+try {
+  // 1. Hoisted path (node_modules/@kaiserinc/assets)
+  createStubs(join(root, "node_modules/@kaiserinc/assets"));
 
-// 2. pnpm virtual store — cada entrada @kaiserinc+react@* precisa do sibling
-const pnpmDir = join(root, "node_modules/.pnpm");
-if (existsSync(pnpmDir)) {
-  const entries = readdirSync(pnpmDir).filter((e) =>
-    e.startsWith("@kaiserinc+react@")
-  );
-  for (const entry of entries) {
-    const assetsDir = join(pnpmDir, entry, "node_modules/@kaiserinc/assets");
-    createStubs(assetsDir);
+  // 2. pnpm virtual store — cada entrada @kaiserinc+react@* precisa do sibling
+  const pnpmDir = join(root, "node_modules/.pnpm");
+  if (existsSync(pnpmDir)) {
+    const entries = readdirSync(pnpmDir).filter((e) =>
+      e.startsWith("@kaiserinc+react@")
+    );
+    for (const entry of entries) {
+      const assetsDir = join(pnpmDir, entry, "node_modules/@kaiserinc/assets");
+      createStubs(assetsDir);
+    }
   }
-}
 
-console.log("✓ @kaiserinc/assets stubs criados");
+  console.log("✓ @kaiserinc/assets stubs criados");
+} catch (err) {
+  // Never fail `pnpm install` (e.g. read-only/odd layouts inside containers):
+  // the build step recreates what it needs and Turbopack tolerates missing stubs.
+  console.warn("⚠ postinstall: não foi possível criar stubs @kaiserinc/assets:", err?.message ?? err);
+}

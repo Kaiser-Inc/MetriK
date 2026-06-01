@@ -27,9 +27,9 @@ export function ReportCard({ report, compareMode = false, selected = false, onSe
     : report.coverage_percent >= 50 ? "var(--warning-500)"
     : "var(--danger-500)";
 
-  const xenonColor =
-    report.xenon_passed == null ? "var(--fg-3)"
-    : report.xenon_passed ? "var(--success-500)"
+  const securityColor =
+    report.security_passed == null ? "var(--fg-3)"
+    : report.security_passed ? "var(--success-500)"
     : "var(--danger-500)";
 
   const handleClick = () => {
@@ -122,14 +122,14 @@ export function ReportCard({ report, compareMode = false, selected = false, onSe
             </div>
 
             <div className="flex flex-col items-center gap-0.5">
-              {report.xenon_passed == null
+              {report.security_passed == null
                 ? <CheckCircle2 size={14} style={{ color: "var(--fg-3)" }} />
-                : report.xenon_passed
+                : report.security_passed
                 ? <CheckCircle2 size={14} style={{ color: "var(--success-500)" }} />
                 : <XCircle size={14} style={{ color: "var(--danger-500)" }} />}
               <span style={{ color: "var(--fg-3)", fontSize: "0.65rem" }}>{stackMeta.secLabel}</span>
-              <span className="text-xs font-semibold" style={{ color: xenonColor }}>
-                {report.xenon_passed == null ? "—" : report.xenon_passed ? "Passou" : "Falhou"}
+              <span className="text-xs font-semibold" style={{ color: securityColor }}>
+                {report.security_passed == null ? "—" : report.security_passed ? "Passou" : "Falhou"}
               </span>
             </div>
           </div>

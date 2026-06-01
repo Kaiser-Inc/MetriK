@@ -7,11 +7,11 @@ import {
   parseDirectoryHandle,
   parseFilesToItems,
 } from "@/lib/fileSystem";
-import type { EnrichedItem } from "@/types/metrics";
+import type { ReportListResponse } from "@/types/metrics";
 import { formatDate } from "@/lib/formatDate";
 
 interface Props {
-  onLoad: (items: EnrichedItem[]) => void;
+  onLoad: (result: ReportListResponse) => void;
   compact?: boolean;
 }
 
@@ -28,11 +28,11 @@ export function FilePicker({ onLoad, compact = false }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dirInputRef = useRef<HTMLInputElement>(null);
 
-  const finish = (items: EnrichedItem[]) => {
-    setCount(items.length);
-    setLastDate(items[0]?.generated_at ?? null);
+  const finish = (result: ReportListResponse) => {
+    setCount(result.items.length);
+    setLastDate(result.items[0]?.generated_at ?? null);
     setStatus("loaded");
-    onLoad(items);
+    onLoad(result);
   };
 
   const handleError = (msg: string) => {
@@ -47,8 +47,8 @@ export function FilePicker({ onLoad, compact = false }: Props) {
         const handle = await window.showDirectoryPicker({ mode: "read" });
         dirHandleRef.current = handle;
         setHasHandle(true);
-        const items = await parseDirectoryHandle(handle);
-        finish(items);
+        const result = await parseDirectoryHandle(handle);
+        finish(result);
       } else {
         dirInputRef.current?.click();
       }
@@ -65,8 +65,8 @@ export function FilePicker({ onLoad, compact = false }: Props) {
     if (!dirHandleRef.current) return;
     setStatus("loading");
     try {
-      const items = await parseDirectoryHandle(dirHandleRef.current);
-      finish(items);
+      const result = await parseDirectoryHandle(dirHandleRef.current);
+      finish(result);
     } catch {
       handleError("Erro ao re-leer a pasta.");
     }
@@ -76,8 +76,8 @@ export function FilePicker({ onLoad, compact = false }: Props) {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) { setStatus("idle"); return; }
     setStatus("loading");
-    const items = await parseFilesToItems(files);
-    finish(items);
+    const result = await parseFilesToItems(files);
+    finish(result);
     e.target.value = "";
   };
 
@@ -85,8 +85,8 @@ export function FilePicker({ onLoad, compact = false }: Props) {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) { setStatus("idle"); return; }
     setStatus("loading");
-    const items = await parseFilesToItems(files);
-    finish(items);
+    const result = await parseFilesToItems(files);
+    finish(result);
     e.target.value = "";
   };
 

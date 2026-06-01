@@ -6,14 +6,14 @@ const RUBY_SLUG = "report_2026-05-14_025644";
 const PYTHON_SLUG = "report_2026-05-11_143026";
 
 test.describe("Report dashboard — stack-aware labels", () => {
-  test("Node report shows Biome + npm audit labels", async ({ page }) => {
+  test("Node report shows Biome + pnpm audit labels", async ({ page }) => {
     await page.goto(`/report/${NODE_SLUG}`);
     // Stack badge in header
     await expect(page.locator("text=Node").first()).toBeVisible();
     // Lint section — "Biome" not "Pylint"
     await expect(page.getByText("Biome", { exact: false }).first()).toBeVisible();
-    // Security section — "npm audit"
-    await expect(page.getByText("npm audit", { exact: false }).first()).toBeVisible();
+    // Security section — "pnpm audit"
+    await expect(page.getByText("pnpm audit", { exact: false }).first()).toBeVisible();
     // Pylint word must NOT appear as section label
     await expect(page.getByText("Pylint Score")).not.toBeVisible();
   });
@@ -42,7 +42,7 @@ test.describe("Report dashboard — stack-aware labels", () => {
     await expect(page.getByText("Cobertura").first()).toBeVisible();
     await expect(page.getByText("Biome Score").first()).toBeVisible();
     await expect(page.getByText("Bugs Estimados").first()).toBeVisible();
-    await expect(page.getByText("npm audit").first()).toBeVisible();
+    await expect(page.getByText("pnpm audit").first()).toBeVisible();
   });
 
   test("Ruby dashboard renders all 6 summary cards", async ({ page }) => {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TopBar, EmptyState, Badge } from "@kaiserinc/react";
-import { FolderOpen, Settings, RefreshCw, GitCompare } from "lucide-react";
+import { FolderOpen, Settings, RefreshCw, GitCompare, AlertTriangle, X } from "lucide-react";
 import { ReportCard } from "@/components/ReportCard";
 import { FilePicker } from "@/components/FilePicker";
 import { CompareBar } from "@/components/CompareBar";
@@ -11,20 +11,23 @@ import { MetriKLogo } from "@/components/MetriKLogo";
 import { Footer } from "@/components/Footer";
 import { TutorialModal } from "@/components/TutorialModal";
 import { saveReportsToSession, loadReportsFromSession } from "@/lib/fileSystem";
-import type { EnrichedItem } from "@/types/metrics";
+import type { EnrichedItem, ReportListResponse, ReportLoadError } from "@/types/metrics";
 import { StackFilter, type StackFilterValue } from "@/components/StackFilter";
 
 interface Props {
   items: EnrichedItem[];
+  loadErrors?: ReportLoadError[];
   error?: string;
   deployMode?: boolean;
 }
 
-export function HomeContent({ items: initialItems, error, deployMode = false }: Props) {
+export function HomeContent({ items: initialItems, loadErrors = [], error, deployMode = false }: Props) {
   const router = useRouter();
 
   const [deployItems, setDeployItems] = useState<EnrichedItem[]>([]);
+  const [deployErrors, setDeployErrors] = useState<ReportLoadError[]>([]);
   const [deployLoaded, setDeployLoaded] = useState(false);
+  const [errorsDismissed, setErrorsDismissed] = useState(false);
 
   const [stackFilter, setStackFilter] = useState<StackFilterValue>(() => {
     if (typeof window !== "undefined") {
@@ -45,15 +48,18 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
     if (!deployMode) return;
     const cached = loadReportsFromSession();
     if (cached?.length) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDeployItems(cached);
       setDeployLoaded(true);
     }
   }, [deployMode]);
 
-  const handleDeployLoad = (loaded: EnrichedItem[]) => {
-    setDeployItems(loaded);
+  const handleDeployLoad = (result: ReportListResponse) => {
+    setDeployItems(result.items);
+    setDeployErrors(result.errors);
+    setErrorsDismissed(false);
     setDeployLoaded(true);
-    saveReportsToSession(loaded);
+    saveReportsToSession(result.items);
   };
 
   const handleSelect = (slug: string, checked: boolean) => {
@@ -72,6 +78,10 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
     ? deployItems
     : deployLoaded ? deployItems : initialItems;
 
+  // Errors come from whichever source is currently driving the list.
+  const activeErrors = (deployMode || deployLoaded) ? deployErrors : loadErrors;
+  const showErrorBanner = !errorsDismissed && activeErrors.length > 0;
+
   const items = stackFilter === "all"
     ? allItems
     : allItems.filter((item) => item.stack === stackFilter);
@@ -81,6 +91,43 @@ export function HomeContent({ items: initialItems, error, deployMode = false }: 
       <TopBar logo={<MetriKLogo />} actions={<TutorialModal />} />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
+        {showErrorBanner && (
+          <div
+            role="alert"
+            className="mb-4 rounded-xl"
+            style={{
+              background: "rgba(220,38,38,0.08)",
+              border: "1px solid var(--danger-500)",
+              padding: "14px 16px",
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle size={18} style={{ color: "var(--danger-500)", flexShrink: 0, marginTop: 2 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p className="text-sm font-bold" style={{ color: "var(--danger-500)" }}>
+                  {activeErrors.length} relatório{activeErrors.length !== 1 ? "s" : ""} não pôde ser carregado{activeErrors.length !== 1 ? "s" : ""}
+                </p>
+                <ul className="mt-2 flex flex-col gap-1">
+                  {activeErrors.map((err) => (
+                    <li key={err.file} className="text-xs" style={{ color: "var(--fg-2)" }}>
+                      <code style={{ color: "var(--fg-1)" }}>{err.file}</code>
+                      {" — "}
+                      <span style={{ color: "var(--fg-3)" }}>{err.reason}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <button
+                onClick={() => setErrorsDismissed(true)}
+                aria-label="Dispensar"
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--fg-3)", padding: 2 }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {!deployMode && error && (
           <div className="flex justify-center py-16">
             <EmptyState

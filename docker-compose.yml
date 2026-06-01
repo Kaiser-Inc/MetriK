@@ -1,0 +1,22 @@
+# MetriK — LOCAL mode dashboard.
+# Mounts a host metrics/ folder read-only and serves the dashboard on :3000.
+#
+# Usage:
+#   METRICS_HOST_DIR=/abs/path/to/projeto/metrics docker compose up --build
+#
+# METRICS_HOST_DIR is the absolute path on the HOST to the producer's metrics/
+# folder. It is mounted to /metrics inside the container; METRICS_DIR points the
+# app at that mount so it runs in LOCAL mode (server-side reads).
+
+services:
+  metrik:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${METRIK_PORT:-3000}:3000"
+    environment:
+      METRICS_DIR: /metrics
+    volumes:
+      - "${METRICS_HOST_DIR:?Set METRICS_HOST_DIR to the absolute path of the metrics/ folder}:/metrics:ro"
+    restart: unless-stopped

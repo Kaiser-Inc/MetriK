@@ -18,7 +18,7 @@ interface Props {
   exportRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function PylintChart({ byType, score, lintLabel = "Pylint", exportRef }: Props) {
+export function LintChart({ byType, score, lintLabel = "Lint", exportRef }: Props) {
   const data = Object.entries(byType)
     .filter(([, v]) => v > 0)
     .map(([name, value]) => ({ name, value }));
