@@ -6,6 +6,8 @@ import type { EnrichedItem, ReportLoadError } from "@/types/metrics";
 import { deriveStack } from "@/types/metrics";
 import { migrate } from "@/lib/parseReport";
 
+export const dynamic = "force-dynamic";
+
 type GetReportsResult = {
   items: EnrichedItem[];
   loadErrors: ReportLoadError[];

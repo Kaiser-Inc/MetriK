@@ -5,6 +5,8 @@ import { CompareContent } from "@/components/dashboard/CompareContent";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
 
+export const dynamic = "force-dynamic";
+
 async function getReport(slug: string): Promise<MetricsReport | null> {
   const metricsDir = process.env.METRICS_DIR;
   if (!metricsDir) return null;

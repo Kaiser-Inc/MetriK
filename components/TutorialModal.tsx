@@ -22,6 +22,7 @@ import {
   Terminal,
   FolderOpen,
   Monitor,
+  Server,
 } from "lucide-react";
 
 const METRICS = [
@@ -163,7 +164,7 @@ export function TutorialModal() {
               <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--brand)", marginBottom: 12 }}>
                 Modos de uso
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                 <div style={{
                   padding: "14px 16px",
                   borderRadius: 10,
@@ -176,6 +177,20 @@ export function TutorialModal() {
                   </div>
                   <p style={{ fontSize: "0.78rem", color: "var(--fg-3)", lineHeight: 1.5, margin: 0 }}>
                     Configure <code style={{ color: "var(--brand)" }}>METRICS_DIR</code> no <code style={{ color: "var(--fg-2)" }}>.env.local</code> apontando para a pasta <code style={{ color: "var(--fg-2)" }}>metrics/</code>. Relatórios carregam automaticamente.
+                  </p>
+                </div>
+                <div style={{
+                  padding: "14px 16px",
+                  borderRadius: 10,
+                  border: "1px solid var(--border-default)",
+                  background: "var(--bg-elevated)",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <Server size={14} style={{ color: "var(--brand)" }} />
+                    <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--fg-1)" }}>Docker</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "var(--fg-3)", lineHeight: 1.5, margin: 0 }}>
+                    Use a imagem <code style={{ color: "var(--brand)" }}>phenrymelo/metrik:latest</code> via docker-compose. Monte a pasta <code style={{ color: "var(--fg-2)" }}>metrics/</code> do host em <code style={{ color: "var(--fg-2)" }}>/metrics:ro</code> e defina <code style={{ color: "var(--brand)" }}>METRICS_DIR=/metrics</code>.
                   </p>
                 </div>
                 <div style={{
