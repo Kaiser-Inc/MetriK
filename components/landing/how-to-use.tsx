@@ -16,7 +16,7 @@ function HowToUse() {
           <TutorialGroup title="Como rodar">
             <TutorialModes />
           </TutorialGroup>
-          <TutorialGroup title="Comparar relatórios">
+          <TutorialGroup title="Comparar e exportar">
             <TutorialCompare />
           </TutorialGroup>
         </div>

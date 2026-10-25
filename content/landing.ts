@@ -16,7 +16,7 @@ export const hero = {
   title: "Qualidade de código",
   highlight: "à vista",
   description:
-    "O MetriK lê os relatórios gerados pelos boilerplates KaiserInc-Utils e mostra complexidade, manutenibilidade, cobertura, linter e segurança em gráficos que você compara lado a lado.",
+    "O MetriK lê os relatórios gerados pelos boilerplates KaiserInc-Utils e mostra complexidade, manutenibilidade, cobertura, linter e segurança em gráficos que você compara e exporta.",
 }
 
 export const pillars = [
@@ -30,8 +30,8 @@ export const pillars = [
     description: "Dois relatórios lado a lado, com a variação de cada métrica e a diferença por arquivo.",
   },
   {
-    title: "Entender",
-    description: "Cada métrica tem um painel que explica a escala, os limiares e a boa prática.",
+    title: "Exportar",
+    description: "Gráficos em PNG com resolução 2×, no tema que você está usando, prontos para relatórios e apresentações.",
   },
 ]
 
@@ -68,7 +68,7 @@ export const steps = [
   },
   {
     title: "Analise e compare",
-    description: "Veja os gráficos, compare dois relatórios e abra o painel de cada métrica para entender a nota.",
+    description: "Veja os gráficos, compare dois relatórios e exporte o que precisar.",
   },
 ]
 

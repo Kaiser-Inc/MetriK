@@ -53,7 +53,7 @@ describe("LandingPage", () => {
 
   it("shows the three pillars and the 01, 02, 03 steps", () => {
     renderLanding()
-    for (const name of ["Medir", "Comparar", "Entender"]) {
+    for (const name of ["Medir", "Comparar", "Exportar"]) {
       expect(screen.getByRole("heading", { level: 3, name })).toBeInTheDocument()
     }
     const steps = screen.getByRole("region", { name: "Como funciona" })

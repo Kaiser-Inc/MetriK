@@ -17,6 +17,7 @@ function CompareCharts({ reports }: { reports: [MetricsReport, MetricsReport] })
         <ChartSection
           key={`cc-${index}`}
           label={`${report.project} · CC`}
+          exportName={`${report.project} cc`}
           title={`${report.project} · CC`}
           icon={null}
           legend={CC_LEGEND}
@@ -34,6 +35,7 @@ function CompareCharts({ reports }: { reports: [MetricsReport, MetricsReport] })
         <ChartSection
           key={`coverage-${index}`}
           label={`${report.project} · Cobertura`}
+          exportName={`${report.project} cobertura`}
           title={`${report.project} · Cobertura`}
           icon={null}
           legend={COVERAGE_LEGEND}
@@ -51,6 +53,7 @@ function CompareCharts({ reports }: { reports: [MetricsReport, MetricsReport] })
         <ChartSection
           key={`mi-${index}`}
           label={`${report.project} · MI`}
+          exportName={`${report.project} mi`}
           title={`${report.project} · MI`}
           icon={null}
           legend={MI_LEGEND}
@@ -68,6 +71,7 @@ function CompareCharts({ reports }: { reports: [MetricsReport, MetricsReport] })
         <ChartSection
           key={`lint-${index}`}
           label={`${report.project} · ${lintLabel(report)}`}
+          exportName={`${report.project} ${lintLabel(report)}`}
           title={`${report.project} · ${lintLabel(report)}`}
           icon={null}
           legend={PYLINT_LEGEND}

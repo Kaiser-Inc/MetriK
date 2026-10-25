@@ -25,7 +25,7 @@ export type MetricGuide = {
 }
 
 export const tutorialIntro =
-  "O MetriK lê os relatórios JSON gerados pelos boilerplates KaiserInc-Utils e mostra as métricas de qualidade de código em gráficos que você compara."
+  "O MetriK lê os relatórios JSON gerados pelos boilerplates KaiserInc-Utils e mostra as métricas de qualidade de código em gráficos que você compara e exporta."
 
 export const runModes: RunMode[] = [
   {
@@ -82,6 +82,9 @@ export const compareSteps = [
   "Clique em Ver comparativo na barra que aparece.",
   "Veja os deltas por métrica, os gráficos lado a lado e a diferença por arquivo. Stacks diferentes podem ser comparadas, e a métrica que um dos lados não tem aparece como N/A.",
 ]
+
+export const exportNote =
+  "Cada gráfico tem um botão de download que salva a imagem em PNG, com resolução 2×, no tema ativo."
 
 export const metricGuides: MetricGuide[] = [
   {

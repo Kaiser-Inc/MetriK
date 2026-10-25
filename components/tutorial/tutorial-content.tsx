@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   compareSteps,
+  exportNote,
   metricGuides,
   reportFileNote,
   runModes,
@@ -85,14 +86,17 @@ function TutorialStacks() {
 
 function TutorialCompare() {
   return (
-    <ol className="flex flex-col gap-2">
-      {compareSteps.map((step, index) => (
-        <li key={step} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-          <span className="w-4 shrink-0 font-mono text-primary-text">{index + 1}</span>
-          <span>{step}</span>
-        </li>
-      ))}
-    </ol>
+    <div className="flex flex-col gap-4">
+      <ol className="flex flex-col gap-2">
+        {compareSteps.map((step, index) => (
+          <li key={step} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
+            <span className="w-4 shrink-0 font-mono text-primary-text">{index + 1}</span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="text-sm leading-relaxed text-muted-foreground">{exportNote}</p>
+    </div>
   )
 }
 
@@ -136,7 +140,7 @@ function TutorialContent() {
       <TutorialGroup title="Gerar relatórios">
         <TutorialStacks />
       </TutorialGroup>
-      <TutorialGroup title="Comparar relatórios">
+      <TutorialGroup title="Comparar e exportar">
         <TutorialCompare />
       </TutorialGroup>
       <TutorialGroup title="Métricas">

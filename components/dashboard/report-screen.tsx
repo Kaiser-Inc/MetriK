@@ -175,6 +175,7 @@ function ReportScreen({
         <div className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
           <ChartSection
             title="Complexidade ciclomática"
+            exportName={`${report.project} complexidade ciclomatica`}
             icon={<GitBranchIcon strokeWidth={1.75} />}
             legend={CC_LEGEND}
             scrollable
@@ -184,6 +185,7 @@ function ReportScreen({
 
           <ChartSection
             title="Índice de manutenibilidade"
+            exportName={`${report.project} indice de manutenibilidade`}
             icon={<WrenchIcon strokeWidth={1.75} />}
             legend={MI_LEGEND}
             scrollable
@@ -193,6 +195,7 @@ function ReportScreen({
 
           <ChartSection
             title="Cobertura de testes"
+            exportName={`${report.project} cobertura de testes`}
             icon={<ShieldCheckIcon strokeWidth={1.75} />}
             legend={COVERAGE_LEGEND}
             scrollable
@@ -209,6 +212,7 @@ function ReportScreen({
 
           <ChartSection
             label={`Issues ${stackMeta.lintLabel}`}
+            exportName={`${report.project} issues ${stackMeta.lintLabel}`}
             title={
               <>
                 {`Issues ${stackMeta.lintLabel}`}{" "}

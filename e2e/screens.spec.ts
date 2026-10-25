@@ -68,3 +68,64 @@ test.describe("Report and comparison screens", () => {
     });
   }
 });
+
+test.describe("Chart export", () => {
+  async function download(page: Page, name: RegExp) {
+    const [file] = await Promise.all([
+      page.waitForEvent("download"),
+      page.getByRole("button", { name }).click(),
+    ]);
+    return file;
+  }
+
+  async function pngStats(path: string) {
+    const fs = await import("node:fs");
+    const bytes = fs.readFileSync(path);
+    return { signature: bytes.subarray(0, 8).toString("hex"), size: bytes.length };
+  }
+
+  for (const theme of ["dark", "light"] as const) {
+    test(`downloads a ${theme} theme chart as a real PNG, not a blank image`, async ({ page }) => {
+      await page.addInitScript((t) => localStorage.setItem("theme", t), theme);
+      await page.goto(`/report/${NODE}`);
+      await page.locator(".recharts-bar-rectangle path").first().waitFor();
+
+      const file = await download(page, /Exportar PNG: Cobertura de testes/);
+      expect(file.suggestedFilename()).toBe("node-fastify-boilerplate-cobertura-de-testes.png");
+
+      const path = await file.path();
+      const { signature, size } = await pngStats(path);
+      expect(signature).toBe("89504e470d0a1a0a");
+      expect(size).toBeGreaterThan(8_000);
+
+      // The image must contain the chart colors, so the CSS variables were resolved.
+      const colors = await page.evaluate(async (dataUrl) => {
+        const image = new Image();
+        image.src = dataUrl;
+        await image.decode();
+        const canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext("2d", { willReadFrequently: true })!;
+        context.drawImage(image, 0, 0);
+        const data = context.getImageData(0, 0, image.width, image.height).data;
+        const seen = new Set<string>();
+        for (let i = 0; i < data.length; i += 4 * 97) {
+          seen.add(`${data[i] >> 4},${data[i + 1] >> 4},${data[i + 2] >> 4}`);
+        }
+        const background = `${data[0] >> 4},${data[1] >> 4},${data[2] >> 4}`;
+        return { distinct: seen.size, background, width: image.width };
+      }, "data:image/png;base64," + (await import("node:fs")).readFileSync(path).toString("base64"));
+      expect(colors.distinct).toBeGreaterThan(4);
+      expect(colors.width).toBeGreaterThan(800); // 2x of a ~500px chart
+      if (theme === "dark") expect(colors.background.split(",").every((c) => Number(c) < 4)).toBeTruthy();
+      else expect(colors.background.split(",").every((c) => Number(c) > 12)).toBeTruthy();
+    });
+  }
+
+  test("exports a chart of the comparison", async ({ page }) => {
+    await page.goto(`/compare?a=${PYTHON}&b=${NODE}`);
+    const file = await download(page, /Exportar PNG: node-fastify-boilerplate · CC/);
+    expect(file.suggestedFilename()).toBe("node-fastify-boilerplate-cc.png");
+  });
+});

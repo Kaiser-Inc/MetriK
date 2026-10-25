@@ -60,4 +60,9 @@ describe("TutorialContent", () => {
     render(<TutorialContent />)
     expect(screen.getByText(/Ver comparativo/)).toBeInTheDocument()
   })
+
+  it("says how to export a chart", () => {
+    render(<TutorialContent />)
+    expect(screen.getByText(/botão de download/)).toBeInTheDocument()
+  })
 })
