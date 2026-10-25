@@ -2,16 +2,15 @@ export type Stack = 'python-fastapi' | 'node-fastify' | 'ruby-on-rails' | 'next-
 
 export const STACK_META: Record<Stack, {
   label: string;
-  color: string;
   lintLabel: string;
   secLabel: string;
 }> = {
-  'python-fastapi': { label: 'Python',      color: '#3776AB', lintLabel: 'Pylint',   secLabel: 'Xenon' },
-  'node-fastify':   { label: 'Node',        color: '#339933', lintLabel: 'Biome',    secLabel: 'pnpm audit' },
-  'ruby-on-rails':  { label: 'Ruby',        color: '#CC342D', lintLabel: 'RuboCop',  secLabel: 'bundler-audit' },
-  'next-saas':      { label: 'Next.js',     color: '#0070F3', lintLabel: 'Biome',    secLabel: 'pnpm audit' },
-  'expo-mobile':    { label: 'Expo/RN',     color: '#4630EB', lintLabel: 'Biome',    secLabel: 'pnpm audit' },
-  'unknown':        { label: 'Desconhecido', color: '#6B7280', lintLabel: 'Lint',    secLabel: 'Security' },
+  'python-fastapi': { label: 'Python',      lintLabel: 'Pylint',   secLabel: 'Xenon' },
+  'node-fastify':   { label: 'Node',        lintLabel: 'Biome',    secLabel: 'pnpm audit' },
+  'ruby-on-rails':  { label: 'Ruby',        lintLabel: 'RuboCop',  secLabel: 'bundler-audit' },
+  'next-saas':      { label: 'Next.js',     lintLabel: 'Biome',    secLabel: 'pnpm audit' },
+  'expo-mobile':    { label: 'Expo/RN',     lintLabel: 'Biome',    secLabel: 'pnpm audit' },
+  'unknown':        { label: 'Desconhecido', lintLabel: 'Lint',    secLabel: 'Security' },
 };
 
 /**

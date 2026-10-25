@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { migrate } from "@/lib/parseReport";
-import { ReportDashboard } from "@/components/dashboard/ReportDashboard";
+import { ReportScreen } from "@/components/dashboard/report-screen";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
 
@@ -38,7 +38,7 @@ export default async function ReportPage({
   const { report, loadError } = await getReport(slug);
 
   return (
-    <ReportDashboard
+    <ReportScreen
       report={report}
       slug={slug}
       loadError={loadError}

@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-05-11_143026",
+  "project": "python-fastapi-boilerplate",
+  "cyclomatic_complexity": {
+    "summary": {
+      "average": 3.4,
+      "max": 9,
+      "min": 1,
+      "total_functions": 12,
+      "grade": "A",
+      "per_file": {
+        "app/main.py": 3,
+        "app/routes.py": 5,
+        "app/services.py": 7
+      }
+    }
+  },
+  "maintainability_index": {
+    "summary": {
+      "average": 74.3,
+      "min": 61,
+      "max": 88,
+      "grade": "Alta",
+      "per_file": {
+        "app/main.py": 88,
+        "app/routes.py": 74,
+        "app/services.py": 61
+      }
+    }
+  },
+  "halstead": {
+    "summary": {
+      "estimated_bugs": 0.18,
+      "total_effort": 5300,
+      "files_analyzed": 3
+    }
+  },
+  "test_coverage": {
+    "percent": 83.5,
+    "covered_lines": 167,
+    "missing_lines": 33,
+    "num_statements": 200,
+    "by_file": {
+      "app/main.py": 95,
+      "app/routes.py": 82,
+      "app/services.py": 70
+    },
+    "tests_passed": 24,
+    "tests_failed": 0,
+    "tests_total": 24
+  },
+  "lint": {
+    "summary": {
+      "total_issues": 4,
+      "by_type": {
+        "convention": 3,
+        "warning": 1
+      },
+      "score_line": "9.2/10",
+      "score": 9.2
+    }
+  },
+  "security": {
+    "passed": true,
+    "output": "",
+    "thresholds": {
+      "max_absolute": "B",
+      "max_modules": "B",
+      "max_average": "A"
+    }
+  },
+  "ruff": {
+    "raw": {},
+    "summary": {
+      "total_issues": 5,
+      "by_code": {
+        "E501": 3,
+        "F401": 2
+      },
+      "by_file": {
+        "app/routes.py": 4,
+        "app/services.py": 1
+      }
+    }
+  },
+  "pip_audit": {
+    "passed": false,
+    "total_vulnerabilities": 1,
+    "vulnerabilities": [
+      {
+        "package": "requests",
+        "version": "2.0.0",
+        "id": "GHSA-xxxx",
+        "description": "Example advisory",
+        "fix_versions": [
+          "2.31.0"
+        ]
+      }
+    ]
+  }
+}

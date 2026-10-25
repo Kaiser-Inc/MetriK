@@ -1,65 +1,53 @@
-# Schema de relatório MetriK
+# MetriK report schema
 
-O JSON gerado pelos produtores **KaiserInc-Utils** é a **fonte de verdade**. O
-MetriK aceita todo campo emitido — sem perda de dados e sem falhas silenciosas.
-A migração/validação acontece em [`lib/parseReport.ts`](../lib/parseReport.ts)
-(`migrate()`), e a disponibilidade de cada métrica em
-[`lib/metricAvailability.ts`](../lib/metricAvailability.ts).
+The JSON produced by the **KaiserInc-Utils** generators is the **source of truth**. MetriK accepts every field they emit, with no data loss and no silent failures. Validation and migration happen in [`lib/parseReport.ts`](../lib/parseReport.ts) (`migrate()`), and the availability of each metric is decided in [`lib/metricAvailability.ts`](../lib/metricAvailability.ts).
 
-## Regra de validação
+## Validation rule
 
-- **Falha (throw)** apenas quando uma chave **obrigatória** está ausente. A
-  mensagem nomeia a chave e o slug do arquivo (ex.: `Missing required field
-  "halstead" in slug "report_..."`).
-- **Nunca falha** em chaves extras/desconhecidas — campos novos são ignorados se
-  não tipados e preservados quando opcionais.
-- Sumários vazios (`{}`) de ferramentas que falharam são normalizados para um
-  shape seguro "indisponível" (a UI mostra **N/A** em vez de quebrar).
+- **Throws** only when a **required** key is missing. The message names the key and the file slug (for example `Missing required field "halstead" in slug "report_..."`).
+- **Never throws** on extra or unknown keys. Unknown fields are ignored unless they are typed, and optional ones are kept.
+- Empty summaries (`{}`) from tools that failed are normalized to a safe "unavailable" shape, so the UI shows **N/A** instead of breaking.
 
-## Campos obrigatórios
+## Required fields
 
-| Chave | Tipo | Observação |
-|-------|------|-----------|
+| Key | Type | Note |
+|-----|------|------|
 | `generated_at` | `string` | Timestamp (`YYYY-MM-DD_HHMMSS`) |
-| `project` | `string` | Identifica a stack (substring match em `deriveStack`) |
-| `cyclomatic_complexity` | `{ summary: {...} }` | radon cc / AST / flog |
-| `maintainability_index` | `{ summary: {...} }` | radon mi (N/A em algumas stacks) |
-| `halstead` | `{ summary: {...} }` | radon hal (N/A em algumas stacks) |
-| `test_coverage` | `{ percent, by_file, ... }` | cobertura |
-| `lint` | `{ summary: LintSummary }` | linter principal |
-| `security` | `SecurityInfo` | auditoria / limiares |
+| `project` | `string` | Identifies the stack (substring match in `deriveStack`) |
+| `cyclomatic_complexity` | `{ summary: {...} }` | radon cc, AST or flog |
+| `maintainability_index` | `{ summary: {...} }` | radon mi (N/A on some stacks) |
+| `halstead` | `{ summary: {...} }` | radon hal (N/A on some stacks) |
+| `test_coverage` | `{ percent, by_file, ... }` | Coverage |
+| `lint` | `{ summary: LintSummary }` | Main linter |
+| `security` | `SecurityInfo` | Audit and thresholds |
 
-## Remaps de legado (transparentes)
+## Legacy remaps (transparent)
 
-| Campo legado | Campo canônico |
-|--------------|----------------|
+| Legacy field | Canonical field |
+|--------------|-----------------|
 | `pylint` | `lint` |
 | `xenon` | `security` |
 
-Relatórios antigos continuam válidos; um aviso (uma vez por slug) é logado.
+Old reports stay valid. A warning is logged once per slug.
 
-## Campos opcionais (novos)
+## Optional fields
 
-Todos opcionais — relatórios sem eles permanecem válidos.
+All optional. Reports without them stay valid.
 
-| Chave | Stack | Shape | Uso na UI |
-|-------|-------|-------|-----------|
-| `ruff` | Python | `{ raw?, summary: { total_issues, by_code, by_file } }` | Seção **Ruff** (issues por código) |
-| `pip_audit` | Python | `{ passed, total_vulnerabilities, vulnerabilities[], error? }` | Card **Segurança** + seção pip-audit |
-| `flog_score` | Rails | `{ summary: { average, max, min, total_functions, grade, per_file } }` | Badge **Flog** |
-| `test_coverage.reported_coverage` / `real_coverage` | Node/Next/Expo | `number` | Nota de cobertura dupla |
-| `test_coverage.tests_passed` / `tests_failed` / `tests_total` | Todos | `number` | Card **Testes** |
-| `test_coverage.excluded_*` | Todos | — | Metadados de cobertura |
+| Key | Stack | Shape | Where it shows up |
+|-----|-------|-------|-------------------|
+| `ruff` | Python | `{ raw?, summary: { total_issues, by_code, by_file } }` | **Ruff** section (issues by rule code) |
+| `pip_audit` | Python | `{ passed, total_vulnerabilities, vulnerabilities[], error? }` | The security metric and the **Segurança · pip-audit** section |
+| `flog_score` | Rails | `{ summary: { average, max, min, total_functions, grade, per_file } }` | **Flog** section |
+| `test_coverage.reported_coverage` / `real_coverage` | Node, Next, Expo | `number` | Dual coverage note under the coverage chart |
+| `test_coverage.tests_passed` / `tests_failed` / `tests_total` | All | `number` | **Testes** metric |
+| `test_coverage.excluded_*` | All | — | Coverage metadata |
 
-### Nota sobre Python: `pip_audit` vs `xenon`
+### Python note: `pip_audit` vs `xenon`
 
-No Python o card **Segurança** reflete o `pip_audit` (auditoria real de CVEs). O
-`xenon` (limiares de complexidade) é exibido **separadamente** como
-"Xenon · Limiares de Complexidade" — ele não é uma métrica de segurança.
+On Python, the security metric reflects `pip_audit`, which is a real CVE audit. `xenon` (complexity thresholds) is shown **separately** as "Xenon · Limiares de Complexidade", because it is not a security metric.
 
 ## Stacks (`deriveStack`)
 
-Detecção por substring no `project` (ordem importa):
-`expo` → `expo-mobile`, `next` → `next-saas`, `fastify` → `node-fastify`,
-`rails`/`ruby` → `ruby-on-rails`, `python`/`fastapi` → `python-fastapi`,
-`node` → `node-fastify`, senão → `unknown` (ícone e label neutros).
+The stack is detected by substring in `project`, and the order matters:
+`expo` → `expo-mobile`, `next` → `next-saas`, `fastify` → `node-fastify`, `rails` or `ruby` → `ruby-on-rails`, `python` or `fastapi` → `python-fastapi`, `node` → `node-fastify`, anything else → `unknown` (neutral icon and label).

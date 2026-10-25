@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-05-14_055600",
+  "project": "node-fastify-boilerplate",
+  "cyclomatic_complexity": {
+    "summary": {
+      "average": 3.1,
+      "max": 8,
+      "min": 1,
+      "total_functions": 12,
+      "grade": "A",
+      "per_file": {
+        "src/app.ts": 2,
+        "src/routes.ts": 4,
+        "src/users.ts": 6
+      }
+    }
+  },
+  "maintainability_index": {
+    "summary": {
+      "average": 70.0,
+      "min": 58,
+      "max": 82,
+      "grade": "Alta",
+      "per_file": {
+        "src/app.ts": 82,
+        "src/routes.ts": 70,
+        "src/users.ts": 58
+      }
+    }
+  },
+  "halstead": {
+    "summary": {
+      "estimated_bugs": 0.22,
+      "total_effort": 6100,
+      "files_analyzed": 3
+    }
+  },
+  "test_coverage": {
+    "percent": 88.0,
+    "covered_lines": 176,
+    "missing_lines": 24,
+    "num_statements": 200,
+    "by_file": {
+      "src/app.ts": 100,
+      "src/routes.ts": 90,
+      "src/users.ts": 75
+    },
+    "tests_passed": 40,
+    "tests_failed": 0,
+    "tests_total": 40,
+    "reported_coverage": 91.0,
+    "real_coverage": 88.0
+  },
+  "lint": {
+    "summary": {
+      "total_issues": 2,
+      "by_type": {
+        "warning": 2
+      },
+      "score_line": "9.6/10",
+      "score": 9.6
+    }
+  },
+  "security": {
+    "passed": true,
+    "output": "",
+    "thresholds": {
+      "max_absolute": "B",
+      "max_modules": "B",
+      "max_average": "A"
+    }
+  }
+}
