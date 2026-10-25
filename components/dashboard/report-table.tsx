@@ -86,7 +86,9 @@ function ReportTable({ items, selected, onSelect }: ReportTableProps) {
                   </TableCell>
                   <TableCell>
                     <span className="inline-flex items-center gap-2">
-                      <StackIcon stack={stack} size={14} />
+                      <span aria-hidden="true" className="flex">
+                        <StackIcon stack={stack} size={14} />
+                      </span>
                       {meta.label}
                     </span>
                   </TableCell>
@@ -124,7 +126,9 @@ function ReportTable({ items, selected, onSelect }: ReportTableProps) {
                   {report.project}
                 </Link>
                 <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <StackIcon stack={stack} size={12} />
+                  <span aria-hidden="true" className="flex">
+                    <StackIcon stack={stack} size={12} />
+                  </span>
                   {meta.label} · {formatDate(report.generated_at)}
                 </span>
                 <span className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">

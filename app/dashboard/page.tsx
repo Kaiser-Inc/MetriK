@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { parseMetricsDate } from "@/lib/formatDate";
-import { HomeContent } from "@/components/HomeContent";
+import { DashboardScreen } from "@/components/dashboard/dashboard-screen";
 import type { EnrichedItem, ReportLoadError } from "@/types/metrics";
 import { deriveStack } from "@/types/metrics";
 import { migrate } from "@/lib/parseReport";
@@ -64,9 +64,9 @@ export default async function DashboardPage() {
   const deployMode = !process.env.METRICS_DIR;
 
   if (deployMode) {
-    return <HomeContent items={[]} deployMode />;
+    return <DashboardScreen items={[]} deployMode />;
   }
 
   const { items, loadErrors, error } = await getReports();
-  return <HomeContent items={items} loadErrors={loadErrors} error={error} />;
+  return <DashboardScreen items={items} loadErrors={loadErrors} error={error} />;
 }
