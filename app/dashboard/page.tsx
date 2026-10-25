@@ -60,7 +60,7 @@ async function getReports(): Promise<GetReportsResult> {
   }
 }
 
-export default async function HomePage() {
+export default async function DashboardPage() {
   const deployMode = !process.env.METRICS_DIR;
 
   if (deployMode) {

@@ -182,7 +182,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
               ? "Parâmetros ausentes na URL. Selecione 2 relatórios na home e clique em Comparar."
               : "Os relatórios não estão disponíveis na sessão atual. Volte à home e selecione-os novamente."}
           </p>
-          <Link href="/" style={{ fontSize: "0.82rem", color: "var(--brand)", textDecoration: "none", display: "flex", alignItems: "center", gap: 5 }}>
+          <Link href="/dashboard" style={{ fontSize: "0.82rem", color: "var(--brand)", textDecoration: "none", display: "flex", alignItems: "center", gap: 5 }}>
             <ArrowLeft size={13} /> Voltar à home
           </Link>
         </main>
@@ -274,7 +274,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
             >
               <ol className="flex items-center gap-1.5 text-xs" style={{ color: "var(--fg-4)", pointerEvents: "auto" }}>
                 <li>
-                  <Link href="/" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
+                  <Link href="/dashboard" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
                 </li>
                 <li className="flex items-center gap-1.5">
                   <span aria-hidden>/</span>
@@ -296,7 +296,7 @@ export function CompareContent({ reportA: propA, reportB: propB, slugA, slugB, d
         >
           <div aria-hidden style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 50% 0%, rgba(130,87,230,0.12) 0%, transparent 65%)", pointerEvents: "none" }} />
           <div style={{ position: "relative" }}>
-            <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--fg-4)", textDecoration: "none", marginBottom: 12 }}>
+            <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--fg-4)", textDecoration: "none", marginBottom: 12 }}>
               <ArrowLeft size={12} /> Voltar
             </Link>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>

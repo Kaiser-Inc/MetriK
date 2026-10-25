@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Home — report grid", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/dashboard");
   });
 
   test("page loads with MetriK branding", async ({ page }) => {

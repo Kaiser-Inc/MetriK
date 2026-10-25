@@ -80,7 +80,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
           >
             <ol className="flex items-center gap-1.5 text-xs" style={{ color: "var(--fg-4)", pointerEvents: "auto" }}>
               <li>
-                <Link href="/" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
+                <Link href="/dashboard" className="hover:text-[var(--fg-2)] transition-colors">MetriK</Link>
               </li>
               {projectName && (
                 <li className="flex items-center gap-1.5">
@@ -110,7 +110,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
               : "Selecione a pasta com os relatórios na página inicial para carregar este relatório."}
           </p>
           <Link
-            href="/"
+            href="/dashboard"
             style={{
               marginTop: 8,
               fontSize: "0.875rem",
@@ -167,7 +167,7 @@ export function ReportDashboard({ report: serverReport, slug, formattedDate: ser
           />
           <div style={{ position: "relative" }}>
             <Link
-              href="/"
+              href="/dashboard"
               style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--fg-4)", textDecoration: "none", marginBottom: 12 }}
               onMouseEnter={(e) => { e.currentTarget.style.color = "var(--fg-2)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = "var(--fg-4)"; }}
