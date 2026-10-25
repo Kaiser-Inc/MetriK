@@ -10,7 +10,8 @@ describe("TutorialContent", () => {
     for (const mode of ["Local", "Docker", "Deploy"]) {
       expect(screen.getByRole("heading", { name: mode })).toBeInTheDocument()
     }
-    expect(screen.getByText(/METRICS_DIR/)).toBeInTheDocument()
+    expect(screen.getAllByText(/METRICS_DIR/).length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByText("phenrymelo/metrik:latest")).toBeInTheDocument()
   })
 
   it("covers Python FastAPI, Node Fastify and Ruby on Rails, each with its own tools", async () => {

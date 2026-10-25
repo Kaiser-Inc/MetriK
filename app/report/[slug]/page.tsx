@@ -5,6 +5,8 @@ import { ReportScreen } from "@/components/dashboard/report-screen";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
 
+export const dynamic = "force-dynamic";
+
 type GetReportResult = { report: MetricsReport | null; loadError?: string };
 
 async function getReport(slug: string): Promise<GetReportResult> {

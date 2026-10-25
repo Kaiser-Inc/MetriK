@@ -38,7 +38,7 @@ export const runModes: RunMode[] = [
     id: "docker",
     title: "Docker",
     description:
-      "Rode `METRICS_HOST_DIR=/caminho/para/metrics docker compose up --build`. O dashboard abre em `http://localhost:3000` e lê a pasta montada como somente leitura.",
+      "Use a imagem `phenrymelo/metrik:latest` com o docker compose: monte a pasta de relatórios do host em `/metrics:ro` e defina `METRICS_DIR=/metrics`. O dashboard abre em `http://localhost:3000`. Para construir a imagem a partir do código, rode `METRICS_HOST_DIR=/caminho/para/metrics docker compose up --build`.",
   },
   {
     id: "deploy",
