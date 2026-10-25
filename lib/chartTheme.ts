@@ -1,32 +1,33 @@
 import type { CSSProperties } from "react";
 
+// Colors come from KaiserInc Base tokens, so charts follow the active theme.
 export const CHART_COLORS = {
-  good:    "var(--success-500)",
-  warning: "var(--warning-500)",
-  danger:  "var(--danger-500)",
-  brand:   "var(--brand)",
-  fg2:     "var(--fg-2)",
-  border:  "var(--border-default)",
+  good:    "var(--success)",
+  warning: "var(--warning)",
+  danger:  "var(--destructive)",
+  brand:   "var(--primary-text)",
+  fg2:     "var(--muted-foreground)",
+  border:  "var(--border)",
 } as const;
 
 export const TOOLTIP_STYLE: CSSProperties = {
-  background: "#16161f",
-  border: "1px solid rgba(130, 87, 230, 0.25)",
-  color: "#e2e8f0",
+  background: "var(--popover)",
+  border: "1px solid var(--border)",
+  color: "var(--popover-foreground)",
   borderRadius: "6px",
   fontSize: "12px",
   padding: "8px 12px",
-  boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+  boxShadow: "var(--shadow-overlay)",
 };
 
 export const TOOLTIP_LABEL_STYLE: CSSProperties = {
-  color: "#e2e8f0",
+  color: "var(--popover-foreground)",
   fontWeight: 600,
   marginBottom: 2,
 };
 
 export const TOOLTIP_ITEM_STYLE: CSSProperties = {
-  color: "#a0aec0",
+  color: "var(--muted-foreground)",
 };
 
 export const REF_LINE_STYLE = {
@@ -35,9 +36,12 @@ export const REF_LINE_STYLE = {
     fontSize: 11,
     fontWeight: 700,
     dy: -4,
-    fill: "#cbd5e1",
+    fill: "var(--muted-foreground)",
   },
 };
+
+// Hover highlight behind a bar: a neutral wash that reads on both themes.
+export const BAR_CURSOR = { fill: "var(--muted)" };
 
 export function ccColor(value: number): string {
   if (value <= 5) return CHART_COLORS.good;
@@ -58,11 +62,11 @@ export function coverageColor(value: number): string {
 }
 
 export const PYLINT_TYPE_COLORS: Record<string, string> = {
-  convention: "#4472C4",
-  refactor:   "var(--warning-500)",
-  warning:    "#FFC000",
-  error:      "var(--danger-500)",
-  fatal:      "var(--brand)",
+  convention: "var(--chart-1)",
+  refactor:   "var(--chart-3)",
+  warning:    "var(--warning)",
+  error:      "var(--destructive)",
+  fatal:      "var(--chart-5)",
 };
 
 export type LegendItem = {
@@ -73,27 +77,27 @@ export type LegendItem = {
 };
 
 export const CC_LEGEND: LegendItem[] = [
-  { color: "var(--success-500)", label: "≤ 5 — Simples (A)", dot: true },
-  { color: "var(--warning-500)", label: "≤ 10 — Moderado (B)", dot: true },
-  { color: "var(--danger-500)",  label: "> 10 — Complexo (C+)", dot: true },
+  { color: "var(--success)", label: "≤ 5 — Simples (A)", dot: true },
+  { color: "var(--warning)", label: "≤ 10 — Moderado (B)", dot: true },
+  { color: "var(--destructive)",  label: "> 10 — Complexo (C+)", dot: true },
 ];
 
 export const MI_LEGEND: LegendItem[] = [
-  { color: "var(--success-500)", label: "≥ 20 — Fácil manutenção", dot: true },
-  { color: "var(--warning-500)", label: "≥ 10 — Moderado", dot: true },
-  { color: "var(--danger-500)",  label: "< 10 — Difícil manutenção", dot: true },
+  { color: "var(--success)", label: "≥ 20 — Fácil manutenção", dot: true },
+  { color: "var(--warning)", label: "≥ 10 — Moderado", dot: true },
+  { color: "var(--destructive)",  label: "< 10 — Difícil manutenção", dot: true },
 ];
 
 export const COVERAGE_LEGEND: LegendItem[] = [
-  { color: "var(--success-500)", label: "≥ 80% — Meta atingida", dot: true },
-  { color: "var(--warning-500)", label: "≥ 50% — Parcial", dot: true },
-  { color: "var(--danger-500)",  label: "< 50% — Crítico", dot: true },
+  { color: "var(--success)", label: "≥ 80% — Meta atingida", dot: true },
+  { color: "var(--warning)", label: "≥ 50% — Parcial", dot: true },
+  { color: "var(--destructive)",  label: "< 50% — Crítico", dot: true },
 ];
 
 export const PYLINT_LEGEND: LegendItem[] = [
-  { color: "#4472C4",              label: "Convention", dot: true },
-  { color: "var(--warning-500)",   label: "Refactor",   dot: true },
-  { color: "#FFC000",              label: "Warning",    dot: true },
-  { color: "var(--danger-500)",    label: "Error",      dot: true },
-  { color: "var(--brand)",         label: "Fatal",      dot: true },
+  { color: PYLINT_TYPE_COLORS.convention, label: "Convention", dot: true },
+  { color: PYLINT_TYPE_COLORS.refactor,   label: "Refactor",   dot: true },
+  { color: PYLINT_TYPE_COLORS.warning,    label: "Warning",    dot: true },
+  { color: PYLINT_TYPE_COLORS.error,      label: "Error",      dot: true },
+  { color: PYLINT_TYPE_COLORS.fatal,      label: "Fatal",      dot: true },
 ];

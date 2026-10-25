@@ -8,8 +8,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { CircleCheckIcon } from "lucide-react";
 import { TOOLTIP_STYLE, PYLINT_TYPE_COLORS } from "@/lib/chartTheme";
-import { ChartUnavailable } from "./ChartUnavailable";
+import { ChartUnavailable } from "./chart-unavailable";
 
 interface Props {
   byType: Record<string, number>;
@@ -29,26 +30,12 @@ export function LintChart({ byType, score, lintLabel = "Lint", exportRef }: Prop
 
   if (data.length === 0) {
     return (
-      <div ref={exportRef} style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 12,
-      }}>
-        <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
-          <circle cx="28" cy="28" r="27" stroke="var(--success-500)" strokeWidth="2" strokeDasharray="4 3" opacity={0.5} />
-          <path d="M18 28.5L24.5 35L38 21" stroke="var(--success-500)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--fg-1)", margin: 0 }}>
-          Nenhum problema encontrado
-        </p>
-        <p style={{ fontSize: "0.78rem", color: "var(--fg-4)", margin: 0 }}>
-          {`Score ${lintLabel}:`}{" "}
-          <span style={{ color: "var(--success-500)", fontWeight: 700 }}>
-            {score != null ? `${score}/10` : "10/10"}
-          </span>
+      <div ref={exportRef} className="flex flex-1 flex-col items-center justify-center gap-3 py-8">
+        <CircleCheckIcon aria-hidden="true" className="size-12 text-success" strokeWidth={1.5} />
+        <p className="text-base font-medium">Nenhum problema encontrado</p>
+        <p className="text-sm text-muted-foreground">
+          {`Score ${lintLabel}: `}
+          <span className="font-medium text-success">{`${score ?? 10}/10`}</span>
         </p>
       </div>
     );
@@ -71,7 +58,7 @@ export function LintChart({ byType, score, lintLabel = "Lint", exportRef }: Prop
             {data.map((entry, i) => (
               <Cell
                 key={i}
-                fill={PYLINT_TYPE_COLORS[entry.name] ?? "var(--fg-3)"}
+                fill={PYLINT_TYPE_COLORS[entry.name] ?? "var(--muted-foreground)"}
               />
             ))}
           </Pie>
@@ -80,7 +67,7 @@ export function LintChart({ byType, score, lintLabel = "Lint", exportRef }: Prop
             y="45%"
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="var(--fg-1)"
+            fill="var(--foreground)"
             fontSize={20}
             fontWeight={700}
           >
