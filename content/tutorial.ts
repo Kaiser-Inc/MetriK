@@ -25,7 +25,7 @@ export type MetricGuide = {
 }
 
 export const tutorialIntro =
-  "O MetriK lê os relatórios JSON gerados pelos boilerplates KaiserInc-Utils e mostra as métricas de qualidade de código em gráficos que você compara e exporta."
+  "O MetriK lê os relatórios JSON gerados pelos boilerplates KaiserInc-Utils e mostra as métricas de qualidade de código em gráficos que você compara."
 
 export const runModes: RunMode[] = [
   {
