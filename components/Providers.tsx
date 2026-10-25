@@ -1,12 +1,14 @@
 "use client";
 
-import { ThemeProvider, Toaster } from "@kaiserinc/react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider defaultTheme="dark">
+    // `data-theme` keeps the legacy tokens in sync until every screen is migrated.
+    <ThemeProvider attribute={["class", "data-theme"]}>
       {children}
-      <Toaster position="bottom-right" richColors />
+      <Toaster />
     </ThemeProvider>
   );
 }
