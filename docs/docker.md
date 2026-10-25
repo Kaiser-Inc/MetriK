@@ -51,5 +51,3 @@ banner nomeando o arquivo e a chave faltante/ inválida.
 
 - O container roda como o usuário não-root `node`.
 - O mount é **read-only** (`:ro`) — o dashboard nunca escreve na pasta.
-- `scripts/postinstall.mjs` é tolerante a falhas (não quebra o `pnpm install`
-  dentro do container).

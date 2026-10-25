@@ -10,7 +10,7 @@ import { SecuritySide, SideBySide, TestsSide } from "@/components/dashboard/comp
 import { CompareSection } from "@/components/dashboard/compare-section"
 import { CompareSummary } from "@/components/dashboard/compare-summary"
 import { FileDiffTable } from "@/components/dashboard/file-diff-table"
-import { StackIcon } from "@/components/icons/StackIcon"
+import { StackIcon } from "@/components/icons/stack-icon"
 import { SiteFooter } from "@/components/site-footer"
 import { buttonVariants } from "@/components/ui/button"
 import { PageHeader } from "@/components/ui/page-header"

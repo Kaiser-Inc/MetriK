@@ -6,6 +6,10 @@ import type { EnrichedItem, ReportLoadError } from "@/types/metrics";
 import { deriveStack } from "@/types/metrics";
 import { migrate } from "@/lib/parseReport";
 
+// The list depends on METRICS_DIR at request time (local and Docker modes), so it
+// must not be prerendered at build time.
+export const dynamic = "force-dynamic";
+
 type GetReportsResult = {
   items: EnrichedItem[];
   loadErrors: ReportLoadError[];

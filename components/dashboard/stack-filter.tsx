@@ -1,6 +1,6 @@
 "use client"
 
-import { StackIcon } from "@/components/icons/StackIcon"
+import { StackIcon } from "@/components/icons/stack-icon"
 import { Button } from "@/components/ui/button"
 import { STACK_META, type Stack } from "@/types/metrics"
 

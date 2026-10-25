@@ -25,9 +25,11 @@ function ChartSection({ title, label, icon, legend, children, scrollable = false
       className="flex min-h-96 flex-col gap-4 border-t border-border pt-4"
     >
       <h3 id={headingId} className="flex items-center gap-2 text-base font-medium">
-        <span aria-hidden="true" className="flex text-primary-text [&_svg]:size-4">
-          {icon}
-        </span>
+        {icon && (
+          <span aria-hidden="true" className="flex text-primary-text [&_svg]:size-4">
+            {icon}
+          </span>
+        )}
         {title}
       </h3>
       <div className={cn("flex min-h-0 flex-1 flex-col", scrollable && "max-h-[420px] overflow-x-hidden overflow-y-auto")}>

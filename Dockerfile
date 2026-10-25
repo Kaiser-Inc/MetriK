@@ -6,7 +6,6 @@ FROM node:22-alpine AS deps
 WORKDIR /app
 RUN corepack enable
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
-COPY scripts/postinstall.mjs ./scripts/postinstall.mjs
 RUN pnpm install --frozen-lockfile
 
 # ── Stage 2: builder ──────────────────────────────────────────────────────────
