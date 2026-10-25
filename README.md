@@ -4,7 +4,7 @@ MetriK is a multi-stack code quality dashboard. It reads the JSON reports genera
 
 The interface is built with [KaiserInc Base](https://github.com/Kaiser-Inc/base-design), the KaiserInc design system, in a dark, light or system theme.
 
-Report schema: [docs/report-schema.md](docs/report-schema.md) · Run in Docker: [docs/docker.md](docs/docker.md) (both in Portuguese)
+Report schema: [docs/report-schema.md](docs/report-schema.md) · Run in Docker: [docs/docker.md](docs/docker.md)
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org)
@@ -28,7 +28,7 @@ The **Como usar** button in the app header opens the same tutorial as the landin
 - **Stack filter.** One button per stack, with the real logo. The choice is kept in `sessionStorage`.
 - **Labels that follow the stack.** The linter (Pylint, Biome or RuboCop) and the security tool (Xenon, pnpm audit or bundler-audit) change with the project.
 - **Metric strip.** Average complexity, maintainability, linter score, coverage, tests, estimated bugs and security. Each metric has a "learn more" panel with its scale and a good practice.
-- **Four charts.** Cyclomatic complexity, maintainability, coverage and linter issues, with a fixed legend.
+- **Four charts.** Cyclomatic complexity, maintainability, coverage and linter issues, with a fixed legend. Each one has a download button that saves it as a PNG at 2x, on the active theme's background.
 - **N/A states.** When a stack does not produce a metric (Halstead and the maintainability index on Rails, for example), the screen says so instead of showing zeros.
 - **Comparison.** Two reports side by side, with the change in each metric colored by whether it improved, and a per-file table. Reports from different stacks can be compared.
 - **Two data modes.** Local (reads a folder on the server) and deploy (reads the files in the browser). Docker runs the local mode in a container.
