@@ -19,7 +19,7 @@ function HelpSheet() {
     <Sheet>
       <SheetTrigger render={<Button variant="outline" />}>
         <HelpCircleIcon aria-hidden="true" data-icon="inline-start" strokeWidth={1.75} />
-        Como usar
+        <span className="max-sm:sr-only">Como usar</span>
       </SheetTrigger>
       <SheetContent className="sm:w-[calc(520px+3rem)]">
         <SheetHeader>

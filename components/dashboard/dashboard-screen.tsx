@@ -155,20 +155,20 @@ function DashboardScreen({
                 </span>
               }
               description="Análises ordenadas da mais recente à mais antiga."
-              actions={
-                <>
-                  <FilePicker onLoad={handlePicked} compact />
-                  {!deployMode && (
-                    <Button variant="outline" onClick={() => router.refresh()}>
-                      <RefreshCwIcon aria-hidden="true" data-icon="inline-start" strokeWidth={1.75} />
-                      Atualizar lista
-                    </Button>
-                  )}
-                </>
-              }
             />
 
-            <StackFilter value={stackFilter} onChange={handleStackFilter} />
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <StackFilter value={stackFilter} onChange={handleStackFilter} />
+              <div className="flex flex-wrap items-center gap-2">
+                <FilePicker onLoad={handlePicked} compact />
+                {!deployMode && (
+                  <Button variant="outline" onClick={() => router.refresh()}>
+                    <RefreshCwIcon aria-hidden="true" data-icon="inline-start" strokeWidth={1.75} />
+                    Atualizar lista
+                  </Button>
+                )}
+              </div>
+            </div>
 
             {items.length === 0 ? (
               <Empty>

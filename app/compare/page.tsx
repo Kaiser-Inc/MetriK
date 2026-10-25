@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { migrate } from "@/lib/parseReport";
-import { CompareContent } from "@/components/dashboard/CompareContent";
+import { CompareScreen } from "@/components/dashboard/compare-screen";
 import { formatDate } from "@/lib/formatDate";
 import type { MetricsReport } from "@/types/metrics";
 
@@ -25,7 +25,7 @@ export default async function ComparePage({
 
   if (!process.env.METRICS_DIR) {
     return (
-      <CompareContent
+      <CompareScreen
         reportA={null}
         reportB={null}
         slugA={a ?? ""}
@@ -36,7 +36,7 @@ export default async function ComparePage({
 
   if (!a || !b) {
     return (
-      <CompareContent
+      <CompareScreen
         reportA={null}
         reportB={null}
         slugA={a ?? ""}
@@ -49,7 +49,7 @@ export default async function ComparePage({
 
   if (!reportA || !reportB) {
     return (
-      <CompareContent
+      <CompareScreen
         reportA={null}
         reportB={null}
         slugA={a}
@@ -59,7 +59,7 @@ export default async function ComparePage({
   }
 
   return (
-    <CompareContent
+    <CompareScreen
       reportA={reportA}
       reportB={reportB}
       slugA={a}
