@@ -9,7 +9,7 @@ import { CompareBar } from "@/components/dashboard/compare-bar"
 import { FilePicker } from "@/components/dashboard/file-picker"
 import { LoadErrors } from "@/components/dashboard/load-errors"
 import { ReportTable } from "@/components/dashboard/report-table"
-import { StackFilter, type StackFilterValue } from "@/components/dashboard/stack-filter"
+import { STACK_FILTERS, StackFilter, type StackFilterValue } from "@/components/dashboard/stack-filter"
 import { SiteFooter } from "@/components/site-footer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -26,6 +26,25 @@ import { loadReportsFromSession, saveReportsToSession } from "@/lib/fileSystem"
 import type { EnrichedItem, ReportListResponse, ReportLoadError } from "@/types/metrics"
 
 const FILTER_KEY = "metrik-stack-filter"
+const FILTER_VALUES: StackFilterValue[] = ["all", ...STACK_FILTERS]
+
+// A saved value can be stale (a stack removed later) and storage can be blocked.
+function readStoredFilter(): StackFilterValue | null {
+  try {
+    const stored = sessionStorage.getItem(FILTER_KEY) as StackFilterValue | null
+    return stored && FILTER_VALUES.includes(stored) ? stored : null
+  } catch {
+    return null
+  }
+}
+
+function storeFilter(value: StackFilterValue) {
+  try {
+    sessionStorage.setItem(FILTER_KEY, value)
+  } catch {
+    // The filter still works for this visit.
+  }
+}
 
 type DashboardScreenProps = {
   items: EnrichedItem[]
@@ -53,7 +72,7 @@ function DashboardScreen({
   const [stackFilter, setStackFilter] = useState<StackFilterValue>("all")
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(FILTER_KEY) as StackFilterValue | null
+    const stored = readStoredFilter()
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (stored) setStackFilter(stored)
   }, [])
@@ -70,7 +89,8 @@ function DashboardScreen({
 
   const handleStackFilter = (value: StackFilterValue) => {
     setStackFilter(value)
-    sessionStorage.setItem(FILTER_KEY, value)
+    setSelected([])
+    storeFilter(value)
   }
 
   const handlePicked = (result: ReportListResponse) => {
@@ -78,6 +98,7 @@ function DashboardScreen({
     setPickedErrors(result.errors)
     setErrorsDismissed(false)
     setPicked(true)
+    setSelected([])
     saveReportsToSession(result.items)
   }
 
@@ -108,12 +129,13 @@ function DashboardScreen({
               <EmptyMedia variant="icon">
                 <SettingsIcon strokeWidth={1.75} />
               </EmptyMedia>
-              <EmptyTitle>METRICS_DIR não configurado</EmptyTitle>
-              <EmptyDescription>
-                Aponte METRICS_DIR, no .env.local, para a pasta metrics/ do projeto.
-              </EmptyDescription>
+              <EmptyTitle>Não foi possível carregar os relatórios</EmptyTitle>
+              <EmptyDescription>{error}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
+              <p className="text-sm text-muted-foreground">
+                Aponte METRICS_DIR, no .env.local, para a pasta metrics/ do projeto:
+              </p>
               <code className="rounded-md bg-muted px-3 py-1.5 font-mono text-sm">
                 METRICS_DIR=/caminho/absoluto/para/metrics
               </code>

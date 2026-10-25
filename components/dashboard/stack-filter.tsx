@@ -6,7 +6,7 @@ import { STACK_META, type Stack } from "@/types/metrics"
 
 export type StackFilterValue = Stack | "all"
 
-const STACKS: Stack[] = ["python-fastapi", "node-fastify", "ruby-on-rails", "next-saas", "expo-mobile"]
+export const STACK_FILTERS: Stack[] = ["python-fastapi", "node-fastify", "ruby-on-rails", "next-saas", "expo-mobile"]
 
 type StackFilterProps = {
   value: StackFilterValue
@@ -23,7 +23,7 @@ function StackFilter({ value, onChange }: StackFilterProps) {
       >
         Todas
       </Button>
-      {STACKS.map((stack) => (
+      {STACK_FILTERS.map((stack) => (
         <Button
           key={stack}
           variant={value === stack ? "default" : "outline"}

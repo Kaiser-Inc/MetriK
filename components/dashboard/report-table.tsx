@@ -80,7 +80,7 @@ function ReportTable({ items, selected, onSelect }: ReportTableProps) {
                     />
                   </TableCell>
                   <TableCell>
-                    <Link href={`/report/${report.slug}`} className={linkClass}>
+                    <Link href={`/report/${encodeURIComponent(report.slug)}`} className={linkClass}>
                       {report.project}
                     </Link>
                   </TableCell>
@@ -122,7 +122,7 @@ function ReportTable({ items, selected, onSelect }: ReportTableProps) {
                 onCheckedChange={(checked) => onSelect(report.slug, checked)}
               />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <Link href={`/report/${report.slug}`} className={cn(linkClass, "truncate")}>
+                <Link href={`/report/${encodeURIComponent(report.slug)}`} className={cn(linkClass, "truncate")}>
                   {report.project}
                 </Link>
                 <span className="flex items-center gap-2 text-sm text-muted-foreground">

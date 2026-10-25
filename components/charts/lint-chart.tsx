@@ -35,7 +35,7 @@ export function LintChart({ byType, score, lintLabel = "Lint", exportRef }: Prop
         <p className="text-base font-medium">Nenhum problema encontrado</p>
         <p className="text-sm text-muted-foreground">
           {`Score ${lintLabel}: `}
-          <span className="font-medium text-success">{`${score ?? 10}/10`}</span>
+          <span className="font-medium text-success">{`${score}/10`}</span>
         </p>
       </div>
     );
@@ -71,7 +71,7 @@ export function LintChart({ byType, score, lintLabel = "Lint", exportRef }: Prop
             fontSize={20}
             fontWeight={700}
           >
-            {score != null ? `${score}/10` : "N/A"}
+            {`${score}/10`}
           </text>
         </PieChart>
       </ResponsiveContainer>

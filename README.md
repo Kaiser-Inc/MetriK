@@ -158,7 +158,7 @@ pnpm lint       # ESLint
 pnpm build      # production build
 ```
 
-The end-to-end tests read the reports in `e2e/fixtures` and start their own server:
+The end-to-end tests read the reports in `e2e/fixtures` and start their own dev server, so stop any `pnpm dev` first (or set `E2E_REUSE_SERVER=1` to reuse one started with `METRICS_DIR=e2e/fixtures`):
 
 ```bash
 pnpm exec playwright test

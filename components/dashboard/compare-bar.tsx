@@ -25,7 +25,9 @@ function CompareBar({ slugA, slugB, onClear }: CompareBarProps) {
       <span className="text-sm">{count === 1 ? "1 selecionado, escolha mais 1" : "2 selecionados"}</span>
       <Button
         disabled={count < 2}
-        onClick={() => router.push(`/compare?a=${slugA}&b=${slugB}`)}
+        onClick={() =>
+          router.push(`/compare?a=${encodeURIComponent(slugA!)}&b=${encodeURIComponent(slugB!)}`)
+        }
       >
         <GitCompareArrowsIcon aria-hidden="true" data-icon="inline-start" strokeWidth={1.75} />
         Ver comparativo

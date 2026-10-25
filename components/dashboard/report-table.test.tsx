@@ -53,6 +53,18 @@ describe("ReportTable", () => {
     )
   })
 
+  it("encodes the slug in the report link", () => {
+    render(
+      <ReportTable
+        items={[{ ...items[0], slug: "report #1", project: "odd-name" }]}
+        selected={[]}
+        onSelect={vi.fn()}
+      />,
+    )
+    const table = screen.getByRole("table")
+    expect(within(table).getByRole("link", { name: "odd-name" })).toHaveAttribute("href", "/report/report%20%231")
+  })
+
   it("labels the security result with the audit tool of the stack", () => {
     const { table } = renderTable()
     const python = within(table).getByRole("row", { name: /python-fastapi-boilerplate/ })

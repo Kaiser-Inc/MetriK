@@ -25,6 +25,14 @@ describe("CompareBar", () => {
     expect(push).toHaveBeenCalledWith("/compare?a=a&b=b")
   })
 
+  it("encodes slugs that contain URL-reserved characters", async () => {
+    const user = userEvent.setup()
+    render(<CompareBar slugA="report #1" slugB="a&b" onClear={vi.fn()} />)
+
+    await user.click(screen.getByRole("button", { name: "Ver comparativo" }))
+    expect(push).toHaveBeenCalledWith("/compare?a=report%20%231&b=a%26b")
+  })
+
   it("clears the selection", async () => {
     const user = userEvent.setup()
     const onClear = vi.fn()

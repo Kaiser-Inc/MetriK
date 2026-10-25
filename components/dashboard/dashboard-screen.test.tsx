@@ -139,10 +139,29 @@ describe("DashboardScreen", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument()
   })
 
-  it("explains how to configure METRICS_DIR when the folder is unreadable", () => {
-    renderScreen({ items: [], error: "METRICS_DIR não configurado em .env.local" })
-    expect(screen.getByText("METRICS_DIR não configurado")).toBeInTheDocument()
+  it("says why the folder could not be read and how to point METRICS_DIR at it", () => {
+    renderScreen({ items: [], error: "Não foi possível ler METRICS_DIR: /srv/metrics" })
+    expect(screen.getByText("Não foi possível carregar os relatórios")).toBeInTheDocument()
+    expect(screen.getByText("Não foi possível ler METRICS_DIR: /srv/metrics")).toBeInTheDocument()
+    expect(screen.getByText(/METRICS_DIR=\/caminho\/absoluto\/para\/metrics/)).toBeInTheDocument()
     expect(screen.queryByRole("table")).not.toBeInTheDocument()
+  })
+
+  it("ignores a saved stack filter that no longer exists", async () => {
+    sessionStorage.setItem("metrik-stack-filter", "cobol-mainframe")
+    renderScreen()
+    await waitFor(() => expect(screen.getByRole("button", { name: "Todas" })).toHaveAttribute("aria-pressed", "true"))
+    expect(within(screen.getByRole("table")).getAllByRole("row")).toHaveLength(4)
+  })
+
+  it("clears the comparison selection when the stack filter changes", async () => {
+    const user = userEvent.setup()
+    const table = renderScreen()!
+    await user.click(within(table).getByRole("checkbox", { name: /python-fastapi/ }))
+    expect(screen.getByRole("region", { name: "Comparação" })).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: "Node" }))
+    expect(screen.queryByRole("region", { name: "Comparação" })).not.toBeInTheDocument()
   })
 
   it("shows an empty state when there are no reports", () => {
