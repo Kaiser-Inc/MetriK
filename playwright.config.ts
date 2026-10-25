@@ -13,13 +13,18 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Lets CI or sandboxes point at a preinstalled Chromium.
+        launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined },
+      },
     },
   ],
   webServer: {
     command: "pnpm dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: true,
-    timeout: 60_000,
+    url: "http://localhost:3000/api/health",
+    reuseExistingServer: false,
+    timeout: 120_000,
+    env: { METRICS_DIR: `${__dirname}/e2e/fixtures` },
   },
 });

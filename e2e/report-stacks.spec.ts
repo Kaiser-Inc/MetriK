@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// Slugs confirmed from data/ directory
+// Slugs of the reports in e2e/fixtures
 const NODE_SLUG = "report_2026-05-14_0556";
 const RUBY_SLUG = "report_2026-05-14_025644";
 const PYTHON_SLUG = "report_2026-05-11_143026";
@@ -55,7 +55,7 @@ test.describe("Report dashboard — stack-aware labels", () => {
   test("back navigation from report returns to home", async ({ page }) => {
     await page.goto(`/report/${NODE_SLUG}`);
     await page.getByRole("link", { name: /Voltar/ }).click();
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/dashboard");
     await expect(page.getByRole("button", { name: "Todas" })).toBeVisible();
   });
 });

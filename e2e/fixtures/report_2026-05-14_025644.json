@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-05-14_025644",
+  "project": "ruby-on-rails-monolith",
+  "cyclomatic_complexity": {
+    "summary": {
+      "average": 4.2,
+      "max": 10,
+      "min": 1,
+      "total_functions": 8,
+      "grade": "B",
+      "per_file": {
+        "app/models/user.rb": 3,
+        "app/controllers/users_controller.rb": 6
+      }
+    }
+  },
+  "maintainability_index": {
+    "summary": {
+      "average": 0,
+      "min": 0,
+      "max": 0,
+      "grade": "N/A",
+      "per_file": {}
+    }
+  },
+  "halstead": {
+    "summary": {
+      "estimated_bugs": 0,
+      "total_effort": 0,
+      "files_analyzed": 0
+    }
+  },
+  "test_coverage": {
+    "percent": 76.0,
+    "covered_lines": 152,
+    "missing_lines": 48,
+    "num_statements": 200,
+    "by_file": {
+      "app/models/user.rb": 90,
+      "app/controllers/users_controller.rb": 62
+    },
+    "tests_passed": 18,
+    "tests_failed": 1,
+    "tests_total": 19
+  },
+  "lint": {
+    "summary": {
+      "total_issues": 7,
+      "by_type": {
+        "convention": 6,
+        "warning": 1
+      },
+      "score_line": "8.4/10",
+      "score": 8.4
+    }
+  },
+  "security": {
+    "passed": true,
+    "output": "",
+    "thresholds": {
+      "max_absolute": "B",
+      "max_modules": "B",
+      "max_average": "A"
+    }
+  },
+  "flog_score": {
+    "summary": {
+      "average": 17.5,
+      "max": 24,
+      "min": 1,
+      "total_functions": 8,
+      "grade": "B",
+      "per_file": {
+        "app/models/user.rb": 11,
+        "app/controllers/users_controller.rb": 24
+      }
+    }
+  }
+}
